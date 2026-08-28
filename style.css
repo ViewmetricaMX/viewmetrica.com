@@ -103,7 +103,7 @@ button {
 
 .viewer-logo img {
   display: block;
-  width: min(270px, 32vw);
+  width: min(550px, 32vw);
   max-height: 90px;
   object-fit: contain;
 }
