@@ -94,7 +94,7 @@ button {
 
 .viewer-logo {
   position: absolute;
-  bottom: 16px;
+  bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 20;
@@ -103,8 +103,8 @@ button {
 
 .viewer-logo img {
   display: block;
-  width: min(220px, 32vw);
-  max-height: 220px;
+  width: min(180px, 32vw);
+  max-height: 200px;
   object-fit: contain;
 }
 
@@ -129,8 +129,8 @@ button {
   border: 1px solid rgba(255,255,255,.14);
   backdrop-filter: blur(10px);
 
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 480;
   letter-spacing: .18em;
   white-space: nowrap;
 }
