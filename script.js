@@ -1,42 +1,45 @@
-/* ==========================================================================
-   ViewMetricaMX — Experiencias 360°
-   Navegador automático de demos
-========================================================================== */
+/* ============================================================
+   VIEWMETRICAMX
+   VISOR 360° — EXPERIENCIAS
+============================================================ */
 
 
-/* ==========================================================================
+/* ============================================================
    CONFIGURACIÓN
-========================================================================== */
+============================================================ */
 
-const WHATSAPP_NUMBER = "528714005421";
+const CONFIG = {
 
-const WHATSAPP_MESSAGE =
-  "Hola, vi las experiencias 360° de ViewMetricaMX y me gustaría conocer cómo podría aplicarse a mi negocio.";
+  /* WhatsApp */
+  whatsappNumber: "528714005421",
+
+  whatsappMessage:
+    "Hola, vi la experiencia 360° de ViewmetricaMX y me gustaría conocer cómo podría aplicarse a mi negocio.",
+
+  /* Tiempo entre experiencias.
+     1 minuto = 60000
+     2 minutos = 120000
+     3 minutos = 180000
+  */
+  autoplayMinutes: 2,
+
+  /* Velocidad automática del panorama */
+  autoRotateSpeed: 0.006,
+
+  /* Zoom */
+  minFov: 32,
+  maxFov: 92,
+
+  /* Inercia */
+  inertiaFriction: 0.94,
+  maxInertia: 2.5
+
+};
 
 
-/*
-   Tiempo de permanencia por experiencia.
-
-   12000  = 12 segundos
-   30000  = 30 segundos
-   60000  = 1 minuto
-   120000 = 2 minutos
-*/
-
-const AUTO_CHANGE_TIME = 12000;
-
-
-/*
-   Después de que el usuario interactúa, esperamos este tiempo
-   antes de volver a activar el cambio automático.
-*/
-
-const AUTOPLAY_RESUME_DELAY = 5000;
-
-
-/* ==========================================================================
+/* ============================================================
    EXPERIENCIAS
-========================================================================== */
+============================================================ */
 
 const EXPERIENCES = [
 
@@ -44,8 +47,8 @@ const EXPERIENCES = [
     key: "patrimonio",
     title: "PATRIMONIO CULTURAL",
 
-    file:
-      "assets/viewmetricamx_demo_360_patrimonio_cultural.jpg",
+    /* Si tus archivos son JPG, déjalos así */
+    file: "assets/viewmetricamx_demo_360_patrimonio_cultural.jpg",
 
     lon: 0,
     lat: 0,
@@ -56,8 +59,7 @@ const EXPERIENCES = [
     key: "exterior",
     title: "EXTERIOR",
 
-    file:
-      "assets/viewmetricamx_demo_360_exterior.jpg",
+    file: "assets/viewmetricamx_demo_360_exterior.jpg",
 
     lon: 0,
     lat: 0,
@@ -68,8 +70,7 @@ const EXPERIENCES = [
     key: "restaurant",
     title: "RESTAURANT",
 
-    file:
-      "assets/viewmetricamx_demo_360_Restaurant.jpg",
+    file: "assets/viewmetricamx_demo_360_Restaurant.jpg",
 
     lon: 0,
     lat: 0,
@@ -80,8 +81,7 @@ const EXPERIENCES = [
     key: "salon",
     title: "SALÓN",
 
-    file:
-      "assets/viewmetricamx_demo_360_salon.jpg",
+    file: "assets/viewmetricamx_demo_360_salon.jpg",
 
     lon: 0,
     lat: 0,
@@ -92,8 +92,7 @@ const EXPERIENCES = [
     key: "universidad",
     title: "UNIVERSIDAD",
 
-    file:
-      "assets/viewmetricamx_demo_360_universidad.jpg",
+    file: "assets/viewmetricamx_demo_360_universidad.jpg",
 
     lon: 0,
     lat: 0,
@@ -103,73 +102,171 @@ const EXPERIENCES = [
 ];
 
 
-/* ==========================================================================
-   CONTROLES
-========================================================================== */
-
-const FOV_MIN = 32;
-const FOV_MAX = 92;
-
-const AUTOROTATE_SPEED = 0.006;
-
-
-/* ==========================================================================
+/* ============================================================
    INICIO
-========================================================================== */
+============================================================ */
 
-(function init() {
+document.addEventListener("DOMContentLoaded", function () {
 
-  const stageEl =
-    document.getElementById("viewer-stage");
+  const stage = document.getElementById("viewer-stage");
+  const canvas = document.getElementById("pano-canvas");
 
-  const canvas =
-    document.getElementById("pano-canvas");
+  const loading = document.getElementById("viewer-loading");
+  const loadingLabel = document.getElementById("loading-label");
 
-  const loadingEl =
-    document.getElementById("viewer-loading");
+  const titleEl = document.getElementById("experience-title");
+  const counterEl = document.getElementById("experience-counter");
 
-  const loadingLabel =
-    document.getElementById("loading-label");
+  const prevBtn = document.getElementById("viewer-prev");
+  const nextBtn = document.getElementById("viewer-next");
 
-  const titleEl =
-    document.getElementById("experience-title");
-
-  const counterEl =
-    document.getElementById("experience-counter");
-
-  const dragHint =
-    document.getElementById("drag-hint");
+  const dragHint = document.getElementById("drag-hint");
 
   const progressBar =
     document.getElementById("autoplay-progress-bar");
 
-  const prevBtn =
-    document.getElementById("viewer-prev");
-
-  const nextBtn =
-    document.getElementById("viewer-next");
+  const autoplayTime =
+    document.getElementById("autoplay-time");
 
 
-  /* ========================================================================
+  /* ============================================================
+     VERIFICAR THREE.JS
+  ============================================================ */
+
+  if (typeof THREE === "undefined") {
+
+    console.error(
+      "[ViewmetricaMX] Three.js no fue cargado."
+    );
+
+    loadingLabel.textContent =
+      "No se pudo cargar el visor 360°.";
+
+    return;
+  }
+
+
+  /* ============================================================
+     ESTADO THREE.JS
+  ============================================================ */
+
+  let renderer;
+  let scene;
+  let camera;
+  let sphere;
+
+  let currentIndex = 0;
+
+  let lon = 0;
+  let lat = 0;
+
+  let targetFov = 84;
+
+  let isPointerDown = false;
+
+  let pointerStartX = 0;
+  let pointerStartY = 0;
+
+  let pointerStartLon = 0;
+  let pointerStartLat = 0;
+
+  let velocityLon = 0;
+  let velocityLat = 0;
+
+  let lastInteraction = performance.now();
+
+  let userHasInteracted = false;
+
+  const textureCache = {};
+
+  const textureLoader =
+    new THREE.TextureLoader();
+
+
+  /* ============================================================
+     AUTOPLAY
+  ============================================================ */
+
+  const AUTOPLAY_DURATION =
+    CONFIG.autoplayMinutes * 60 * 1000;
+
+  let autoplayStart = performance.now();
+
+
+  function resetAutoplay() {
+
+    autoplayStart = performance.now();
+
+  }
+
+
+  function updateAutoplay() {
+
+    const elapsed =
+      performance.now() - autoplayStart;
+
+    const progress =
+      Math.min(
+        elapsed / AUTOPLAY_DURATION,
+        1
+      );
+
+    progressBar.style.width =
+      (progress * 100) + "%";
+
+
+    const remaining =
+      Math.max(
+        0,
+        AUTOPLAY_DURATION - elapsed
+      );
+
+    const seconds =
+      Math.ceil(remaining / 1000);
+
+    const minutes =
+      Math.floor(seconds / 60);
+
+    const secs =
+      seconds % 60;
+
+    autoplayTime.textContent =
+      String(minutes).padStart(2, "0")
+      + ":"
+      + String(secs).padStart(2, "0");
+
+
+    if (elapsed >= AUTOPLAY_DURATION) {
+
+      nextExperience();
+
+      resetAutoplay();
+
+    }
+
+  }
+
+
+  /* ============================================================
      WEBGL
-  ======================================================================== */
+  ============================================================ */
 
   function hasWebGL() {
 
     try {
 
-      const testCanvas =
+      const test =
         document.createElement("canvas");
 
       return !!(
         window.WebGLRenderingContext &&
         (
-          testCanvas.getContext("webgl") ||
-          testCanvas.getContext("experimental-webgl")
+          test.getContext("webgl") ||
+          test.getContext("experimental-webgl")
         )
       );
 
-    } catch (e) {
+    } catch (error) {
 
       return false;
 
@@ -178,126 +275,21 @@ const AUTOROTATE_SPEED = 0.006;
   }
 
 
-  if (
-    typeof THREE === "undefined" ||
-    !hasWebGL()
-  ) {
+  if (!hasWebGL()) {
 
-    loadingEl.hidden = true;
-
-    canvas.hidden = true;
-
-    const fallback =
-      document.createElement("img");
-
-    fallback.src =
-      EXPERIENCES[0].file;
-
-    fallback.alt =
-      EXPERIENCES[0].title;
-
-    fallback.style.width = "100%";
-    fallback.style.height = "100%";
-    fallback.style.objectFit = "cover";
-
-    stageEl.insertBefore(
-      fallback,
-      stageEl.firstChild
-    );
+    loadingLabel.textContent =
+      "Tu navegador no soporta WebGL.";
 
     return;
 
   }
 
 
-  /* ========================================================================
-     THREE.JS
-  ======================================================================== */
-
-  let renderer;
-  let scene;
-  let camera;
-  let sphere;
-
-
-  /* ========================================================================
-     ESTADO
-  ======================================================================== */
-
-  let currentIndex = 0;
-
-  let lon =
-    EXPERIENCES[0].lon;
-
-  let lat =
-    EXPERIENCES[0].lat;
-
-  let targetFov =
-    EXPERIENCES[0].fov;
-
-
-  let isPointerDown = false;
-
-  let pointerDownX = 0;
-  let pointerDownY = 0;
-
-  let pointerDownLon = 0;
-  let pointerDownLat = 0;
-
-
-  let velocityLon = 0;
-  let velocityLat = 0;
-
-
-  const INERTIA_FRICTION = 0.94;
-  const MAX_INERTIA = 2.5;
-
-
-  let userHasInteracted = false;
-
-  let lastInteraction =
-    performance.now();
-
-
-  let autoTimerStart =
-    performance.now();
-
-
-  let autoPausedUntil = 0;
-
-
-  const textureCache = {};
-
-  const loader =
-    new THREE.TextureLoader();
-
-
-  /* ========================================================================
-     UTILIDADES
-  ======================================================================== */
-
-  function clamp(value, min, max) {
-
-    return Math.max(
-      min,
-      Math.min(max, value)
-    );
-
-  }
-
-
-  function cacheKey(index) {
-
-    return String(index);
-
-  }
-
-
-  /* ========================================================================
+  /* ============================================================
      ESCENA
-  ======================================================================== */
+  ============================================================ */
 
-  function buildScene() {
+  function initThree() {
 
     renderer =
       new THREE.WebGLRenderer({
@@ -336,6 +328,8 @@ const AUTOROTATE_SPEED = 0.006;
       );
 
 
+    /* Fundamental para que el panorama
+       se vea correctamente desde dentro */
     geometry.scale(
       1,
       1,
@@ -360,27 +354,35 @@ const AUTOROTATE_SPEED = 0.006;
     scene.add(sphere);
 
 
-    resizeRenderer();
+    resize();
+
+    window.addEventListener(
+      "resize",
+      resize
+    );
+
 
     animate();
 
   }
 
 
-  /* ========================================================================
+  /* ============================================================
      RESIZE
-  ======================================================================== */
+  ============================================================ */
 
-  function resizeRenderer() {
+  function resize() {
 
     const width =
-      stageEl.clientWidth;
+      stage.clientWidth;
 
     const height =
-      stageEl.clientHeight;
+      stage.clientHeight;
 
 
-    if (!width || !height) return;
+    if (!width || !height) {
+      return;
+    }
 
 
     renderer.setSize(
@@ -393,20 +395,31 @@ const AUTOROTATE_SPEED = 0.006;
     camera.aspect =
       width / height;
 
-
     camera.updateProjectionMatrix();
 
   }
 
 
-  /* ========================================================================
-     ACTUALIZAR UI
-  ======================================================================== */
+  /* ============================================================
+     TEXTURA
+  ============================================================ */
 
-  function updateExperienceUI() {
+  function loadExperience(index) {
 
     const experience =
-      EXPERIENCES[currentIndex];
+      EXPERIENCES[index];
+
+    if (!experience) {
+      return;
+    }
+
+
+    currentIndex = index;
+
+    lon = experience.lon;
+    lat = experience.lat;
+
+    targetFov = experience.fov;
 
 
     titleEl.textContent =
@@ -414,64 +427,28 @@ const AUTOROTATE_SPEED = 0.006;
 
 
     counterEl.textContent =
-      String(currentIndex + 1)
-        .padStart(2, "0")
+      String(index + 1).padStart(2, "0")
       + " / "
-      + String(EXPERIENCES.length)
-        .padStart(2, "0");
-
-  }
+      + String(EXPERIENCES.length).padStart(2, "0");
 
 
-  /* ========================================================================
-     CARGAR EXPERIENCIA
-  ======================================================================== */
+    loading.hidden = false;
 
-  function loadExperience(index) {
-
-    index =
-      (
-        index +
-        EXPERIENCES.length
-      ) %
-      EXPERIENCES.length;
+    loadingLabel.textContent =
+      "Cargando "
+      + experience.title.toLowerCase()
+      + "…";
 
 
-    currentIndex = index;
-
-
-    const experience =
-      EXPERIENCES[currentIndex];
-
-
-    lon =
-      experience.lon;
-
-    lat =
-      experience.lat;
-
-    targetFov =
-      experience.fov;
-
-
-    camera.fov =
-      experience.fov;
-
-    camera.updateProjectionMatrix();
-
-
-    updateExperienceUI();
-
-
-    const key =
-      cacheKey(currentIndex);
-
-
-    if (textureCache[key]) {
+    if (
+      textureCache[experience.file]
+    ) {
 
       applyTexture(
-        textureCache[key]
+        textureCache[experience.file]
       );
+
+      loading.hidden = true;
 
       resetAutoplay();
 
@@ -480,24 +457,20 @@ const AUTOROTATE_SPEED = 0.006;
     }
 
 
-    loadingLabel.textContent =
-      "Cargando " +
-      experience.title.toLowerCase() +
-      "…";
-
-
-    loadingEl.hidden = false;
-
-
-    loader.load(
+    textureLoader.load(
 
       experience.file,
 
-      function(texture) {
+      function (texture) {
+
+        console.log(
+          "[ViewmetricaMX] Panorama cargado:",
+          experience.file
+        );
+
 
         if (
-          "colorSpace"
-          in texture
+          "colorSpace" in texture
         ) {
 
           texture.colorSpace =
@@ -516,35 +489,44 @@ const AUTOROTATE_SPEED = 0.006;
           false;
 
 
-        textureCache[key] =
+        texture.wrapS =
+          THREE.ClampToEdgeWrapping;
+
+        texture.wrapT =
+          THREE.ClampToEdgeWrapping;
+
+
+        texture.repeat.x = 1;
+        texture.offset.x = 0;
+
+
+        textureCache[experience.file] =
           texture;
 
 
         applyTexture(texture);
 
 
-        loadingEl.hidden =
-          true;
+        loading.hidden = true;
 
 
         resetAutoplay();
 
       },
 
-
       undefined,
 
-      function(error) {
+      function (error) {
 
         console.error(
-          "[ViewMetricaMX] Error:",
+          "[ViewmetricaMX] ERROR cargando:",
           experience.file,
           error
         );
 
 
         loadingLabel.textContent =
-          "No se pudo cargar la experiencia.";
+          "No se pudo cargar esta experiencia.";
 
       }
 
@@ -553,43 +535,18 @@ const AUTOROTATE_SPEED = 0.006;
   }
 
 
-  /* ========================================================================
-     TEXTURA
-  ======================================================================== */
+  /* ============================================================
+     APLICAR TEXTURA
+  ============================================================ */
 
   function applyTexture(texture) {
-
-    texture.wrapS =
-      THREE.ClampToEdgeWrapping;
-
-    texture.wrapT =
-      THREE.ClampToEdgeWrapping;
-
-
-    texture.repeat.x = 1;
-
-    texture.offset.x = 0;
-
-
-    if (
-      "colorSpace"
-      in texture
-    ) {
-
-      texture.colorSpace =
-        THREE.SRGBColorSpace;
-
-    }
-
 
     sphere.material.map =
       texture;
 
-
     sphere.material.color.set(
       0xffffff
     );
-
 
     sphere.material.needsUpdate =
       true;
@@ -597,35 +554,58 @@ const AUTOROTATE_SPEED = 0.006;
   }
 
 
-  /* ========================================================================
+  /* ============================================================
      NAVEGACIÓN
-  ======================================================================== */
+  ============================================================ */
 
   function nextExperience() {
 
-    loadExperience(
-      currentIndex + 1
-    );
+    const next =
+      (
+        currentIndex + 1
+      ) % EXPERIENCES.length;
+
+
+    markInteraction();
+
+    loadExperience(next);
 
   }
 
 
   function previousExperience() {
 
-    loadExperience(
-      currentIndex - 1
-    );
+    const previous =
+      (
+        currentIndex - 1
+        + EXPERIENCES.length
+      ) % EXPERIENCES.length;
+
+
+    markInteraction();
+
+    loadExperience(previous);
 
   }
 
 
+  nextBtn.addEventListener(
+    "click",
+    function (event) {
+
+      event.stopPropagation();
+
+      nextExperience();
+
+    }
+  );
+
+
   prevBtn.addEventListener(
     "click",
-    function(e) {
+    function (event) {
 
-      e.stopPropagation();
-
-      markInteraction();
+      event.stopPropagation();
 
       previousExperience();
 
@@ -633,90 +613,469 @@ const AUTOROTATE_SPEED = 0.006;
   );
 
 
-  nextBtn.addEventListener(
-    "click",
-    function(e) {
+  /* ============================================================
+     INTERACCIÓN
+  ============================================================ */
 
-      e.stopPropagation();
+  function markInteraction() {
+
+    userHasInteracted = true;
+
+    lastInteraction =
+      performance.now();
+
+    resetAutoplay();
+
+
+    if (
+      !dragHint.classList.contains(
+        "is-hidden"
+      )
+    ) {
+
+      dragHint.classList.add(
+        "is-hidden"
+      );
+
+    }
+
+  }
+
+
+  function pointerDown(
+    x,
+    y
+  ) {
+
+    isPointerDown = true;
+
+    stage.classList.add(
+      "is-dragging"
+    );
+
+
+    pointerStartX = x;
+    pointerStartY = y;
+
+
+    pointerStartLon = lon;
+    pointerStartLat = lat;
+
+
+    velocityLon = 0;
+    velocityLat = 0;
+
+  }
+
+
+  function pointerMove(
+    x,
+    y
+  ) {
+
+    if (!isPointerDown) {
+      return;
+    }
+
+
+    const newLon =
+      pointerStartLon
+      + (
+        pointerStartX - x
+      ) * 0.16;
+
+
+    const newLat =
+      pointerStartLat
+      + (
+        y - pointerStartY
+      ) * 0.16;
+
+
+    velocityLon =
+      clamp(
+        newLon - lon,
+        -CONFIG.maxInertia,
+        CONFIG.maxInertia
+      );
+
+
+    velocityLat =
+      clamp(
+        newLat - lat,
+        -CONFIG.maxInertia,
+        CONFIG.maxInertia
+      );
+
+
+    lon = newLon;
+    lat = newLat;
+
+
+    markInteraction();
+
+  }
+
+
+  function pointerUp() {
+
+    isPointerDown = false;
+
+    stage.classList.remove(
+      "is-dragging"
+    );
+
+  }
+
+
+  /* ============================================================
+     MOUSE
+  ============================================================ */
+
+  stage.addEventListener(
+    "mousedown",
+    function (event) {
+
+      if (
+        event.target.closest(
+          "button"
+        )
+      ) {
+        return;
+      }
+
 
       markInteraction();
 
-      nextExperience();
+      pointerDown(
+        event.clientX,
+        event.clientY
+      );
 
     }
   );
 
 
-  /* ========================================================================
-     AUTOPLAY
-  ======================================================================== */
+  window.addEventListener(
+    "mousemove",
+    function (event) {
 
-  function resetAutoplay() {
-
-    autoTimerStart =
-      performance.now();
-
-  }
-
-
-  function pauseAutoplay() {
-
-    autoPausedUntil =
-      performance.now() +
-      AUTOPLAY_RESUME_DELAY;
-
-  }
-
-
-  function updateAutoplay(now) {
-
-    if (
-      now <
-      autoPausedUntil
-    ) {
-
-      progressBar.style.width =
-        "0%";
-
-      return;
-
-    }
-
-
-    const elapsed =
-      now -
-      autoTimerStart;
-
-
-    const progress =
-      clamp(
-        elapsed /
-        AUTO_CHANGE_TIME,
-        0,
-        1
+      pointerMove(
+        event.clientX,
+        event.clientY
       );
 
-
-    progressBar.style.width =
-      (progress * 100)
-      + "%";
+    }
+  );
 
 
-    if (
-      elapsed >=
-      AUTO_CHANGE_TIME
-    ) {
+  window.addEventListener(
+    "mouseup",
+    pointerUp
+  );
 
-      nextExperience();
+
+  /* ============================================================
+     TOUCH
+  ============================================================ */
+
+  let pinchDistance = null;
+  let pinchFov = null;
+
+
+  stage.addEventListener(
+    "touchstart",
+    function (event) {
+
+      markInteraction();
+
+
+      if (
+        event.touches.length === 1
+      ) {
+
+        pointerDown(
+          event.touches[0].clientX,
+          event.touches[0].clientY
+        );
+
+      }
+
+
+      if (
+        event.touches.length === 2
+      ) {
+
+        isPointerDown = false;
+
+        pinchDistance =
+          getTouchDistance(
+            event.touches
+          );
+
+        pinchFov =
+          targetFov;
+
+      }
+
+    },
+    {
+      passive: true
+    }
+  );
+
+
+  stage.addEventListener(
+    "touchmove",
+    function (event) {
+
+      if (
+        event.touches.length === 1 &&
+        isPointerDown
+      ) {
+
+        pointerMove(
+          event.touches[0].clientX,
+          event.touches[0].clientY
+        );
+
+      }
+
+
+      if (
+        event.touches.length === 2 &&
+        pinchDistance
+      ) {
+
+        const distance =
+          getTouchDistance(
+            event.touches
+          );
+
+
+        const scale =
+          pinchDistance / distance;
+
+
+        targetFov =
+          clamp(
+            pinchFov * scale,
+            CONFIG.minFov,
+            CONFIG.maxFov
+          );
+
+
+        markInteraction();
+
+      }
+
+    },
+    {
+      passive: true
+    }
+  );
+
+
+  stage.addEventListener(
+    "touchend",
+    function (event) {
+
+      if (
+        event.touches.length === 0
+      ) {
+
+        pointerUp();
+
+        pinchDistance = null;
+
+      }
 
     }
+  );
+
+
+  function getTouchDistance(
+    touches
+  ) {
+
+    const dx =
+      touches[0].clientX -
+      touches[1].clientX;
+
+    const dy =
+      touches[0].clientY -
+      touches[1].clientY;
+
+
+    return Math.sqrt(
+      dx * dx + dy * dy
+    );
 
   }
 
 
-  /* ========================================================================
+  /* ============================================================
+     WHEEL
+  ============================================================ */
+
+  stage.addEventListener(
+    "wheel",
+    function (event) {
+
+      event.preventDefault();
+
+      markInteraction();
+
+
+      targetFov =
+        clamp(
+          targetFov +
+          event.deltaY * 0.04,
+          CONFIG.minFov,
+          CONFIG.maxFov
+        );
+
+    },
+    {
+      passive: false
+    }
+  );
+
+
+  /* ============================================================
+     ZOOM
+  ============================================================ */
+
+  document
+    .getElementById("zoom-in")
+    .addEventListener(
+      "click",
+      function () {
+
+        markInteraction();
+
+        targetFov =
+          clamp(
+            targetFov - 10,
+            CONFIG.minFov,
+            CONFIG.maxFov
+          );
+
+      }
+    );
+
+
+  document
+    .getElementById("zoom-out")
+    .addEventListener(
+      "click",
+      function () {
+
+        markInteraction();
+
+        targetFov =
+          clamp(
+            targetFov + 10,
+            CONFIG.minFov,
+            CONFIG.maxFov
+          );
+
+      }
+    );
+
+
+  /* ============================================================
+     RECENTER
+  ============================================================ */
+
+  document
+    .getElementById("recenter")
+    .addEventListener(
+      "click",
+      function () {
+
+        markInteraction();
+
+
+        const experience =
+          EXPERIENCES[currentIndex];
+
+
+        lon =
+          experience.lon;
+
+        lat =
+          experience.lat;
+
+        targetFov =
+          experience.fov;
+
+      }
+    );
+
+
+  /* ============================================================
+     FULLSCREEN
+  ============================================================ */
+
+  document
+    .getElementById("fullscreen-btn")
+    .addEventListener(
+      "click",
+      function () {
+
+        markInteraction();
+
+
+        if (
+          !document.fullscreenElement
+        ) {
+
+          if (
+            stage.requestFullscreen
+          ) {
+
+            stage.requestFullscreen();
+
+          } else if (
+            stage.webkitRequestFullscreen
+          ) {
+
+            stage.webkitRequestFullscreen();
+
+          }
+
+        } else {
+
+          if (
+            document.exitFullscreen
+          ) {
+
+            document.exitFullscreen();
+
+          } else if (
+            document.webkitExitFullscreen
+          ) {
+
+            document.webkitExitFullscreen();
+
+          }
+
+        }
+
+      }
+    );
+
+
+  document.addEventListener(
+    "fullscreenchange",
+    resize
+  );
+
+
+  /* ============================================================
      RENDER LOOP
-  ======================================================================== */
+  ============================================================ */
 
   function animate() {
 
@@ -725,44 +1084,38 @@ const AUTOROTATE_SPEED = 0.006;
     );
 
 
-    const now =
-      performance.now();
-
-
-    updateAutoplay(now);
-
-
+    /* Inercia */
     if (!isPointerDown) {
 
       if (
-        Math.abs(velocityLon) >
-          0.001 ||
-        Math.abs(velocityLat) >
-          0.001
+        Math.abs(velocityLon) > 0.001 ||
+        Math.abs(velocityLat) > 0.001
       ) {
 
         lon += velocityLon;
-
         lat += velocityLat;
 
 
         velocityLon *=
-          INERTIA_FRICTION;
+          CONFIG.inertiaFriction;
 
         velocityLat *=
-          INERTIA_FRICTION;
+          CONFIG.inertiaFriction;
 
       }
 
+      /*
+       * Una vez que termina la interacción,
+       * el panorama continúa girando lentamente.
+       */
       else if (
         userHasInteracted &&
-        now -
-          lastInteraction >
-          AUTOPLAY_RESUME_DELAY
+        performance.now() -
+        lastInteraction > 5200
       ) {
 
         lon +=
-          AUTOROTATE_SPEED;
+          CONFIG.autoRotateSpeed;
 
       }
 
@@ -793,15 +1146,15 @@ const AUTOROTATE_SPEED = 0.006;
       new THREE.Vector3(
 
         500 *
-          Math.sin(phi) *
-          Math.cos(theta),
+        Math.sin(phi) *
+        Math.cos(theta),
 
         500 *
-          Math.cos(phi),
+        Math.cos(phi),
 
         500 *
-          Math.sin(phi) *
-          Math.sin(theta)
+        Math.sin(phi) *
+        Math.sin(theta)
 
       );
 
@@ -813,13 +1166,14 @@ const AUTOROTATE_SPEED = 0.006;
     );
 
 
-    camera.lookAt(target);
+    camera.lookAt(
+      target
+    );
 
 
     if (
       Math.abs(
-        camera.fov -
-        targetFov
+        camera.fov - targetFov
       ) > 0.05
     ) {
 
@@ -827,8 +1181,7 @@ const AUTOROTATE_SPEED = 0.006;
         (
           targetFov -
           camera.fov
-        ) *
-        0.15;
+        ) * 0.15;
 
 
       camera.updateProjectionMatrix();
@@ -841,572 +1194,185 @@ const AUTOROTATE_SPEED = 0.006;
       camera
     );
 
+
+    updateAutoplay();
+
   }
 
 
-  /* ========================================================================
-     INTERACCIÓN
-  ======================================================================== */
+  /* ============================================================
+     UTILIDAD
+  ============================================================ */
 
-  function markInteraction() {
+  function clamp(
+    value,
+    min,
+    max
+  ) {
 
-    userHasInteracted =
-      true;
-
-
-    lastInteraction =
-      performance.now();
-
-
-    pauseAutoplay();
-
-
-    if (
-      !dragHint.classList.contains(
-        "is-hidden"
+    return Math.max(
+      min,
+      Math.min(
+        max,
+        value
       )
-    ) {
-
-      dragHint.classList.add(
-        "is-hidden"
-      );
-
-    }
-
-  }
-
-
-  function onPointerDown(
-    clientX,
-    clientY
-  ) {
-
-    isPointerDown =
-      true;
-
-
-    stageEl.classList.add(
-      "is-dragging"
-    );
-
-
-    pointerDownX =
-      clientX;
-
-    pointerDownY =
-      clientY;
-
-
-    pointerDownLon =
-      lon;
-
-    pointerDownLat =
-      lat;
-
-  }
-
-
-  function onPointerMove(
-    clientX,
-    clientY
-  ) {
-
-    if (!isPointerDown)
-      return;
-
-
-    const newLon =
-      (
-        pointerDownX -
-        clientX
-      ) *
-      0.16 +
-      pointerDownLon;
-
-
-    const newLat =
-      (
-        clientY -
-        pointerDownY
-      ) *
-      0.16 +
-      pointerDownLat;
-
-
-    velocityLon =
-      clamp(
-        newLon - lon,
-        -MAX_INERTIA,
-        MAX_INERTIA
-      );
-
-
-    velocityLat =
-      clamp(
-        newLat - lat,
-        -MAX_INERTIA,
-        MAX_INERTIA
-      );
-
-
-    lon =
-      newLon;
-
-    lat =
-      newLat;
-
-
-    markInteraction();
-
-  }
-
-
-  function onPointerUp() {
-
-    isPointerDown =
-      false;
-
-
-    stageEl.classList.remove(
-      "is-dragging"
     );
 
   }
 
 
-  /* ========================================================================
-     MOUSE
-  ======================================================================== */
-
-  stageEl.addEventListener(
-    "mousedown",
-    function(e) {
-
-      onPointerDown(
-        e.clientX,
-        e.clientY
-      );
-
-
-      markInteraction();
-
-    }
-  );
-
-
-  window.addEventListener(
-    "mousemove",
-    function(e) {
-
-      onPointerMove(
-        e.clientX,
-        e.clientY
-      );
-
-    }
-  );
-
-
-  window.addEventListener(
-    "mouseup",
-    onPointerUp
-  );
-
-
-  /* ========================================================================
-     TOUCH
-  ======================================================================== */
-
-  let pinchStartDist =
-    null;
-
-  let pinchStartFov =
-    null;
-
-
-  stageEl.addEventListener(
-    "touchstart",
-    function(e) {
-
-      markInteraction();
-
-
-      if (
-        e.touches.length === 1
-      ) {
-
-        onPointerDown(
-          e.touches[0].clientX,
-          e.touches[0].clientY
-        );
-
-      }
-
-
-      else if (
-        e.touches.length === 2
-      ) {
-
-        isPointerDown =
-          false;
-
-
-        pinchStartDist =
-          touchDistance(
-            e.touches
-          );
-
-
-        pinchStartFov =
-          targetFov;
-
-      }
-
-    },
-    { passive: true }
-  );
-
-
-  stageEl.addEventListener(
-    "touchmove",
-    function(e) {
-
-      if (
-        e.touches.length === 1 &&
-        isPointerDown
-      ) {
-
-        onPointerMove(
-          e.touches[0].clientX,
-          e.touches[0].clientY
-        );
-
-      }
-
-
-      else if (
-        e.touches.length === 2 &&
-        pinchStartDist
-      ) {
-
-        const dist =
-          touchDistance(
-            e.touches
-          );
-
-
-        const scale =
-          pinchStartDist /
-          dist;
-
-
-        targetFov =
-          clamp(
-            pinchStartFov *
-              scale,
-            FOV_MIN,
-            FOV_MAX
-          );
-
-
-        markInteraction();
-
-      }
-
-    },
-    { passive: true }
-  );
-
-
-  stageEl.addEventListener(
-    "touchend",
-    function(e) {
-
-      if (
-        e.touches.length === 0
-      ) {
-
-        onPointerUp();
-
-        pinchStartDist =
-          null;
-
-      }
-
-    }
-  );
-
-
-  function touchDistance(
-    touches
-  ) {
-
-    const dx =
-      touches[0].clientX -
-      touches[1].clientX;
-
-
-    const dy =
-      touches[0].clientY -
-      touches[1].clientY;
-
-
-    return Math.sqrt(
-      dx * dx +
-      dy * dy
-    );
-
-  }
-
-
-  /* ========================================================================
-     RUEDA
-  ======================================================================== */
-
-  stageEl.addEventListener(
-    "wheel",
-    function(e) {
-
-      e.preventDefault();
-
-      markInteraction();
-
-
-      targetFov =
-        clamp(
-          targetFov +
-            e.deltaY * 0.04,
-          FOV_MIN,
-          FOV_MAX
-        );
-
-    },
-    { passive: false }
-  );
-
-
-  /* ========================================================================
-     ZOOM
-  ======================================================================== */
-
-  document
-    .getElementById("zoom-in")
-    .addEventListener(
-      "click",
-      function() {
-
-        markInteraction();
-
-        targetFov =
-          clamp(
-            targetFov - 10,
-            FOV_MIN,
-            FOV_MAX
-          );
-
-      }
-    );
-
-
-  document
-    .getElementById("zoom-out")
-    .addEventListener(
-      "click",
-      function() {
-
-        markInteraction();
-
-        targetFov =
-          clamp(
-            targetFov + 10,
-            FOV_MIN,
-            FOV_MAX
-          );
-
-      }
-    );
-
-
-  /* ========================================================================
-     RECENTER
-  ======================================================================== */
-
-  document
-    .getElementById("recenter")
-    .addEventListener(
-      "click",
-      function() {
-
-        markInteraction();
-
-
-        const experience =
-          EXPERIENCES[currentIndex];
-
-
-        lon =
-          experience.lon;
-
-        lat =
-          experience.lat;
-
-        targetFov =
-          experience.fov;
-
-      }
-    );
-
-
-  /* ========================================================================
-     FULLSCREEN
-  ======================================================================== */
-
-  document
-    .getElementById("fullscreen-btn")
-    .addEventListener(
-      "click",
-      function() {
-
-        markInteraction();
-
-
-        if (
-          !document.fullscreenElement
-        ) {
-
-          const request =
-            stageEl.requestFullscreen ||
-            stageEl.webkitRequestFullscreen;
-
-
-          if (request) {
-
-            request.call(
-              stageEl
-            );
-
-          }
-
-        }
-
-        else {
-
-          const exit =
-            document.exitFullscreen ||
-            document.webkitExitFullscreen;
-
-
-          if (exit) {
-
-            exit.call(
-              document
-            );
-
-          }
-
-        }
-
-      }
-    );
-
-
-  /* ========================================================================
-     RESIZE
-  ======================================================================== */
-
-  window.addEventListener(
-    "resize",
-    resizeRenderer
-  );
-
-
-  document.addEventListener(
-    "fullscreenchange",
-    resizeRenderer
-  );
-
-
-  /* ========================================================================
-     NAVEGACIÓN DEL SITIO
-  ======================================================================== */
-
-  const navLinks =
+  /* ============================================================
+     REVEAL
+  ============================================================ */
+
+  const revealElements =
     document.querySelectorAll(
-      ".nav-link"
+      ".reveal"
     );
 
 
-  navLinks.forEach(
-    function(link) {
+  if (
+    "IntersectionObserver" in window
+  ) {
 
-      link.addEventListener(
-        "click",
-        function() {
+    const observer =
+      new IntersectionObserver(
+        function (entries) {
 
-          navLinks.forEach(
-            function(item) {
+          entries.forEach(
+            function (entry) {
 
-              item.classList.remove(
-                "is-active"
-              );
+              if (
+                entry.isIntersecting
+              ) {
+
+                entry.target.classList.add(
+                  "in"
+                );
+
+                observer.unobserve(
+                  entry.target
+                );
+
+              }
 
             }
           );
 
-
-          link.classList.add(
-            "is-active"
-          );
-
+        },
+        {
+          threshold: 0.12
         }
       );
 
-    }
-  );
 
+    revealElements.forEach(
+      function (element) {
 
-  /* ========================================================================
-     WHATSAPP
-  ======================================================================== */
+        observer.observe(
+          element
+        );
 
-  const cta =
-    document.getElementById(
-      "whatsapp-cta"
+      }
     );
 
+  } else {
 
-  if (cta) {
+    revealElements.forEach(
+      function (element) {
 
-    const url =
-      "https://wa.me/" +
-      WHATSAPP_NUMBER +
-      "?text=" +
-      encodeURIComponent(
-        WHATSAPP_MESSAGE
-      );
+        element.classList.add(
+          "in"
+        );
 
-
-    cta.href =
-      url;
+      }
+    );
 
   }
 
 
-  /* ========================================================================
-     INICIALIZACIÓN
-  ======================================================================== */
+  /* ============================================================
+     WHATSAPP
+  ============================================================ */
 
-  buildScene();
+  const whatsappUrl =
+    "https://wa.me/"
+    + CONFIG.whatsappNumber
+    + "?text="
+    + encodeURIComponent(
+      CONFIG.whatsappMessage
+    );
 
-  updateExperienceUI();
 
-  loadExperience(
-    0
-  );
+  const whatsappCta =
+    document.getElementById(
+      "whatsappCta"
+    );
+
+
+  const footerWhatsapp =
+    document.getElementById(
+      "footerWhatsapp"
+    );
+
+
+  if (whatsappCta) {
+
+    whatsappCta.href =
+      whatsappUrl;
+
+    whatsappCta.target =
+      "_blank";
+
+    whatsappCta.rel =
+      "noopener noreferrer";
+
+  }
+
+
+  if (footerWhatsapp) {
+
+    footerWhatsapp.href =
+      whatsappUrl;
+
+    footerWhatsapp.target =
+      "_blank";
+
+    footerWhatsapp.rel =
+      "noopener noreferrer";
+
+  }
+
+
+  /* ============================================================
+     YEAR
+  ============================================================ */
+
+  const year =
+    document.getElementById(
+      "year"
+    );
+
+
+  if (year) {
+
+    year.textContent =
+      new Date().getFullYear();
+
+  }
+
+
+  /* ============================================================
+     INICIALIZAR
+  ============================================================ */
+
+  initThree();
+
+  loadExperience(0);
 
 
   setTimeout(
-    function() {
+    function () {
 
       dragHint.classList.add(
         "is-hidden"
@@ -1417,4 +1383,8 @@ const AUTOROTATE_SPEED = 0.006;
   );
 
 
-})();
+  console.log(
+    "[ViewmetricaMX] Visor 360° inicializado."
+  );
+
+});
