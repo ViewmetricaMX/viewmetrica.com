@@ -47,7 +47,16 @@ function setupWhatsApp() {
 
 function setupMaps() {
   const maps = document.getElementById("footerMaps");
-  if (maps) maps.href = CONFIG.GOOGLE_MAPS_URL;
+  if (!maps) return;
+  maps.href = CONFIG.GOOGLE_MAPS_URL;
+
+  if (!document.getElementById("footerEmail")) {
+    const email = document.createElement("a");
+    email.id = "footerEmail";
+    email.href = "mailto:hola@viewmetrica.com";
+    email.textContent = "hola@viewmetrica.com";
+    maps.insertAdjacentElement("afterend", email);
+  }
 }
 
 function setupReveal() {
@@ -228,7 +237,6 @@ function setupViewer() {
     }
 
     resetAutoplay();
-
     if (loading) loading.hidden = false;
     if (loadingLabel) loadingLabel.textContent = "Preparando la imagen…";
 
@@ -417,7 +425,6 @@ function setupViewer() {
     if (dragHint) dragHint.classList.add("is-hidden");
   }, 7000);
 
-  /* Precarga progresiva usando el mismo caché del visor. */
   EXPERIENCES.forEach(function (experience, index) {
     if (index === 0) return;
     setTimeout(function () {
@@ -427,7 +434,6 @@ function setupViewer() {
     }, 1800 + index * 1200);
   });
 
-  /* Autoplay independiente del render loop. */
   setInterval(function () {
     if (!loadingExperience) nextExperience();
   }, CONFIG.AUTO_CHANGE_TIME);
