@@ -1,142 +1,175 @@
 /* ==========================================================================
-   VIEWMETRICAMX — REALITY INTELLIGENCE
-   Visor 360° principal
-   ========================================================================== */
+   ViewMetricaMX — Experiencias 360°
+   Navegador automático de demos
+========================================================================== */
 
 
 /* ==========================================================================
    CONFIGURACIÓN
 ========================================================================== */
 
-const CONFIG = {
+const WHATSAPP_NUMBER = "528714005421";
 
-  WHATSAPP_NUMBER: "528714005421",
+const WHATSAPP_MESSAGE =
+  "Hola, vi las experiencias 360° de ViewMetricaMX y me gustaría conocer cómo podría aplicarse a mi negocio.";
 
-  WHATSAPP_MESSAGE:
-    "Hola, vi la experiencia 360° de ViewmetricaMX y me gustaría conocer cómo podría aplicarse a mi negocio.",
 
-  AUTOPLAY_MINUTES: 3,
+/*
+   Tiempo de permanencia por experiencia.
 
-  AUTOROTATE_SPEED: 0.006,
+   12000  = 12 segundos
+   30000  = 30 segundos
+   60000  = 1 minuto
+   120000 = 2 minutos
+*/
 
-  FOV_MIN: 32,
+const AUTO_CHANGE_TIME = 12000;
 
-  FOV_MAX: 92
 
-};
+/*
+   Después de que el usuario interactúa, esperamos este tiempo
+   antes de volver a activar el cambio automático.
+*/
+
+const AUTOPLAY_RESUME_DELAY = 5000;
 
 
 /* ==========================================================================
-   PANORAMAS
+   EXPERIENCIAS
 ========================================================================== */
 
-const PANORAMAS = [
+const EXPERIENCES = [
 
   {
     key: "patrimonio",
-    label: "PATRIMONIO CULTURAL",
-    file: "assets/viewmetricamx_demo_360_patrimonio_cultural.jpg"
+    title: "PATRIMONIO CULTURAL",
+
+    file:
+      "assets/viewmetricamx_demo_360_patrimonio_cultural.jpg",
+
+    lon: 0,
+    lat: 0,
+    fov: 84
   },
 
   {
     key: "exterior",
-    label: "EXTERIOR",
-    file: "assets/viewmetricamx_demo_360_exterior.jpg"
+    title: "EXTERIOR",
+
+    file:
+      "assets/viewmetricamx_demo_360_exterior.jpg",
+
+    lon: 0,
+    lat: 0,
+    fov: 84
   },
 
   {
     key: "restaurant",
-    label: "RESTAURANTE",
-    file: "assets/viewmetricamx_demo_360_Restaurant.jpg"
+    title: "RESTAURANT",
+
+    file:
+      "assets/viewmetricamx_demo_360_Restaurant.jpg",
+
+    lon: 0,
+    lat: 0,
+    fov: 84
   },
 
   {
     key: "salon",
-    label: "SALÓN DE EVENTOS",
-    file: "assets/viewmetricamx_demo_360_salon.jpg"
+    title: "SALÓN",
+
+    file:
+      "assets/viewmetricamx_demo_360_salon.jpg",
+
+    lon: 0,
+    lat: 0,
+    fov: 84
   },
 
   {
     key: "universidad",
-    label: "UNIVERSIDAD",
-    file: "assets/viewmetricamx_demo_360_universidad.jpg"
+    title: "UNIVERSIDAD",
+
+    file:
+      "assets/viewmetricamx_demo_360_universidad.jpg",
+
+    lon: 0,
+    lat: 0,
+    fov: 84
   }
 
 ];
 
 
 /* ==========================================================================
+   CONTROLES
+========================================================================== */
+
+const FOV_MIN = 32;
+const FOV_MAX = 92;
+
+const AUTOROTATE_SPEED = 0.006;
+
+
+/* ==========================================================================
    INICIO
 ========================================================================== */
 
-(function initViewer() {
+(function init() {
 
-  const stage = document.getElementById("viewer-stage");
+  const stageEl =
+    document.getElementById("viewer-stage");
 
-  const canvas = document.getElementById("pano-canvas");
+  const canvas =
+    document.getElementById("pano-canvas");
 
-  const loading = document.getElementById("viewer-loading");
+  const loadingEl =
+    document.getElementById("viewer-loading");
 
   const loadingLabel =
-    loading.querySelector(".loading-label");
+    document.getElementById("loading-label");
 
-  const fallback =
-    document.getElementById("viewer-fallback");
+  const titleEl =
+    document.getElementById("experience-title");
 
-  const fallbackImg =
-    document.getElementById("fallback-img");
+  const counterEl =
+    document.getElementById("experience-counter");
 
   const dragHint =
     document.getElementById("drag-hint");
 
-  const label =
-    document.getElementById("pos-tag-label");
+  const progressBar =
+    document.getElementById("autoplay-progress-bar");
 
-  const counter =
-    document.getElementById("point-count");
+  const prevBtn =
+    document.getElementById("viewer-prev");
 
-  const timer =
-    document.getElementById("autoplay-timer");
-
-  const prevButton =
-    document.getElementById("area-prev");
-
-  const nextButton =
-    document.getElementById("area-next");
-
-  const zoomIn =
-    document.getElementById("zoom-in");
-
-  const zoomOut =
-    document.getElementById("zoom-out");
-
-  const recenter =
-    document.getElementById("recenter");
-
-  const fullscreen =
-    document.getElementById("fullscreen-btn");
+  const nextBtn =
+    document.getElementById("viewer-next");
 
 
-  /* ==========================================================================
+  /* ========================================================================
      WEBGL
-  ========================================================================== */
+  ======================================================================== */
 
   function hasWebGL() {
 
     try {
 
-      const test =
+      const testCanvas =
         document.createElement("canvas");
 
       return !!(
         window.WebGLRenderingContext &&
         (
-          test.getContext("webgl") ||
-          test.getContext("experimental-webgl")
+          testCanvas.getContext("webgl") ||
+          testCanvas.getContext("experimental-webgl")
         )
       );
 
-    } catch (error) {
+    } catch (e) {
 
       return false;
 
@@ -150,43 +183,75 @@ const PANORAMAS = [
     !hasWebGL()
   ) {
 
-    fallback.hidden = false;
+    loadingEl.hidden = true;
 
-    fallbackImg.src =
-      PANORAMAS[0].file;
+    canvas.hidden = true;
 
-    loading.hidden = true;
+    const fallback =
+      document.createElement("img");
+
+    fallback.src =
+      EXPERIENCES[0].file;
+
+    fallback.alt =
+      EXPERIENCES[0].title;
+
+    fallback.style.width = "100%";
+    fallback.style.height = "100%";
+    fallback.style.objectFit = "cover";
+
+    stageEl.insertBefore(
+      fallback,
+      stageEl.firstChild
+    );
 
     return;
 
   }
 
 
-  /* ==========================================================================
-     THREE STATE
-  ========================================================================== */
+  /* ========================================================================
+     THREE.JS
+  ======================================================================== */
 
   let renderer;
-
   let scene;
-
   let camera;
-
   let sphere;
+
+
+  /* ========================================================================
+     ESTADO
+  ======================================================================== */
 
   let currentIndex = 0;
 
-  let lon = 0;
+  let lon =
+    EXPERIENCES[0].lon;
 
-  let lat = 0;
+  let lat =
+    EXPERIENCES[0].lat;
 
-  let targetFov = 84;
+  let targetFov =
+    EXPERIENCES[0].fov;
+
+
+  let isPointerDown = false;
+
+  let pointerDownX = 0;
+  let pointerDownY = 0;
+
+  let pointerDownLon = 0;
+  let pointerDownLat = 0;
+
 
   let velocityLon = 0;
-
   let velocityLat = 0;
 
-  let isDragging = false;
+
+  const INERTIA_FRICTION = 0.94;
+  const MAX_INERTIA = 2.5;
+
 
   let userHasInteracted = false;
 
@@ -194,202 +259,128 @@ const PANORAMAS = [
     performance.now();
 
 
-  const INERTIA_FRICTION = 0.94;
+  let autoTimerStart =
+    performance.now();
 
-  const MAX_INERTIA = 2.5;
 
-
-  let startX = 0;
-
-  let startY = 0;
-
-  let startLon = 0;
-
-  let startLat = 0;
+  let autoPausedUntil = 0;
 
 
   const textureCache = {};
 
-  const textureLoader =
+  const loader =
     new THREE.TextureLoader();
 
 
-  /* ==========================================================================
-     AUTOPLAY
-  ========================================================================== */
+  /* ========================================================================
+     UTILIDADES
+  ======================================================================== */
 
-  const AUTOPLAY_SECONDS =
-    CONFIG.AUTOPLAY_MINUTES * 60;
+  function clamp(value, min, max) {
 
-  let autoplayRemaining =
-    AUTOPLAY_SECONDS;
-
-
-  function resetAutoplayTimer() {
-
-    autoplayRemaining =
-      AUTOPLAY_SECONDS;
-
-    updateTimer();
+    return Math.max(
+      min,
+      Math.min(max, value)
+    );
 
   }
 
 
-  function updateTimer() {
+  function cacheKey(index) {
 
-    const minutes =
-      Math.floor(autoplayRemaining / 60);
-
-    const seconds =
-      autoplayRemaining % 60;
-
-    timer.textContent =
-      String(minutes).padStart(2, "0") +
-      ":" +
-      String(seconds).padStart(2, "0");
+    return String(index);
 
   }
 
 
-  function autoplayTick() {
+  /* ========================================================================
+     ESCENA
+  ======================================================================== */
 
-    if (!userHasInteracted) {
+  function buildScene() {
 
-      return;
+    renderer =
+      new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: true,
+        alpha: false
+      });
 
-    }
 
-    autoplayRemaining--;
+    renderer.setPixelRatio(
+      Math.min(
+        window.devicePixelRatio || 1,
+        2
+      )
+    );
 
-    updateTimer();
+
+    scene =
+      new THREE.Scene();
 
 
-    if (autoplayRemaining <= 0) {
-
-      goToPanorama(
-        (currentIndex + 1) %
-        PANORAMAS.length
+    camera =
+      new THREE.PerspectiveCamera(
+        targetFov,
+        16 / 9,
+        1,
+        1100
       );
 
-      resetAutoplayTimer();
 
-    }
+    const geometry =
+      new THREE.SphereGeometry(
+        500,
+        60,
+        40
+      );
+
+
+    geometry.scale(
+      1,
+      1,
+      -1
+    );
+
+
+    const material =
+      new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        toneMapped: false
+      });
+
+
+    sphere =
+      new THREE.Mesh(
+        geometry,
+        material
+      );
+
+
+    scene.add(sphere);
+
+
+    resizeRenderer();
+
+    animate();
 
   }
 
 
-  setInterval(
-    autoplayTick,
-    1000
-  );
-
-
-  /* ==========================================================================
-     BUILD SCENE
-  ========================================================================== */
-
-  renderer =
-    new THREE.WebGLRenderer({
-
-      canvas: canvas,
-
-      antialias: true,
-
-      alpha: false
-
-    });
-
-
-  renderer.setPixelRatio(
-    Math.min(
-      window.devicePixelRatio || 1,
-      2
-    )
-  );
-
-
-  scene =
-    new THREE.Scene();
-
-
-  camera =
-    new THREE.PerspectiveCamera(
-      targetFov,
-      16 / 9,
-      1,
-      1100
-    );
-
-
-  const geometry =
-    new THREE.SphereGeometry(
-      500,
-      60,
-      40
-    );
-
-
-  /*
-     Fundamental para nuestro panorama:
-     invertimos la esfera en Z para mirar
-     desde el interior.
-  */
-
-  geometry.scale(
-    1,
-    1,
-    -1
-  );
-
-
-  const material =
-    new THREE.MeshBasicMaterial({
-
-      color: 0xffffff,
-
-      toneMapped: false
-
-    });
-
-
-  sphere =
-    new THREE.Mesh(
-      geometry,
-      material
-    );
-
-
-  scene.add(sphere);
-
-
-  resize();
-
-
-  window.addEventListener(
-    "resize",
-    resize
-  );
-
-
-  animate();
-
-
-  /* ==========================================================================
+  /* ========================================================================
      RESIZE
-  ========================================================================== */
+  ======================================================================== */
 
-  function resize() {
+  function resizeRenderer() {
 
     const width =
-      stage.clientWidth;
+      stageEl.clientWidth;
 
     const height =
-      stage.clientHeight;
+      stageEl.clientHeight;
 
 
-    if (!width || !height) {
-      return;
-    }
+    if (!width || !height) return;
 
 
     renderer.setSize(
@@ -408,86 +399,105 @@ const PANORAMAS = [
   }
 
 
-  /* ==========================================================================
-     PANORAMA
-  ========================================================================== */
+  /* ========================================================================
+     ACTUALIZAR UI
+  ======================================================================== */
 
-  function goToPanorama(index) {
+  function updateExperienceUI() {
 
-    if (
-      index < 0 ||
-      index >= PANORAMAS.length
-    ) {
-
-      return;
-
-    }
+    const experience =
+      EXPERIENCES[currentIndex];
 
 
-    currentIndex =
-      index;
+    titleEl.textContent =
+      experience.title;
 
 
-    const pano =
-      PANORAMAS[currentIndex];
-
-
-    label.textContent =
-      pano.label;
-
-
-    counter.textContent =
+    counterEl.textContent =
       String(currentIndex + 1)
-        .padStart(2, "0") +
-      "/" +
-      String(PANORAMAS.length)
+        .padStart(2, "0")
+      + " / "
+      + String(EXPERIENCES.length)
         .padStart(2, "0");
 
+  }
 
-    lon = 0;
 
-    lat = 0;
+  /* ========================================================================
+     CARGAR EXPERIENCIA
+  ======================================================================== */
 
-    targetFov = 84;
+  function loadExperience(index) {
 
-    camera.fov = 84;
+    index =
+      (
+        index +
+        EXPERIENCES.length
+      ) %
+      EXPERIENCES.length;
+
+
+    currentIndex = index;
+
+
+    const experience =
+      EXPERIENCES[currentIndex];
+
+
+    lon =
+      experience.lon;
+
+    lat =
+      experience.lat;
+
+    targetFov =
+      experience.fov;
+
+
+    camera.fov =
+      experience.fov;
 
     camera.updateProjectionMatrix();
 
 
-    const cacheKey =
-      String(currentIndex);
+    updateExperienceUI();
 
 
-    if (
-      textureCache[cacheKey]
-    ) {
+    const key =
+      cacheKey(currentIndex);
+
+
+    if (textureCache[key]) {
 
       applyTexture(
-        textureCache[cacheKey]
+        textureCache[key]
       );
+
+      resetAutoplay();
 
       return;
 
     }
 
 
-    loading.hidden = false;
-
     loadingLabel.textContent =
       "Cargando " +
-      pano.label.toLowerCase() +
+      experience.title.toLowerCase() +
       "…";
 
 
-    textureLoader.load(
+    loadingEl.hidden = false;
 
-      pano.file,
+
+    loader.load(
+
+      experience.file,
 
       function(texture) {
 
         if (
-          "colorSpace" in texture
+          "colorSpace"
+          in texture
         ) {
 
           texture.colorSpace =
@@ -506,40 +516,35 @@ const PANORAMAS = [
           false;
 
 
-        texture.wrapS =
-          THREE.ClampToEdgeWrapping;
-
-        texture.wrapT =
-          THREE.ClampToEdgeWrapping;
-
-
-        texture.repeat.x = 1;
-
-        texture.offset.x = 0;
-
-
-        textureCache[cacheKey] =
+        textureCache[key] =
           texture;
 
 
         applyTexture(texture);
 
-        loading.hidden = true;
+
+        loadingEl.hidden =
+          true;
+
+
+        resetAutoplay();
 
       },
+
 
       undefined,
 
       function(error) {
 
         console.error(
-          "Error cargando panorama:",
-          pano.file,
+          "[ViewMetricaMX] Error:",
+          experience.file,
           error
         );
 
+
         loadingLabel.textContent =
-          "No se pudo cargar el panorama.";
+          "No se pudo cargar la experiencia.";
 
       }
 
@@ -548,18 +553,43 @@ const PANORAMAS = [
   }
 
 
-  /* ==========================================================================
-     APPLY TEXTURE
-  ========================================================================== */
+  /* ========================================================================
+     TEXTURA
+  ======================================================================== */
 
   function applyTexture(texture) {
+
+    texture.wrapS =
+      THREE.ClampToEdgeWrapping;
+
+    texture.wrapT =
+      THREE.ClampToEdgeWrapping;
+
+
+    texture.repeat.x = 1;
+
+    texture.offset.x = 0;
+
+
+    if (
+      "colorSpace"
+      in texture
+    ) {
+
+      texture.colorSpace =
+        THREE.SRGBColorSpace;
+
+    }
+
 
     sphere.material.map =
       texture;
 
+
     sphere.material.color.set(
       0xffffff
     );
+
 
     sphere.material.needsUpdate =
       true;
@@ -567,422 +597,126 @@ const PANORAMAS = [
   }
 
 
-  /* ==========================================================================
-     NAVIGATION
-  ========================================================================== */
+  /* ========================================================================
+     NAVEGACIÓN
+  ======================================================================== */
 
-  function nextPanorama() {
+  function nextExperience() {
 
-    markInteraction();
-
-    goToPanorama(
-      (currentIndex + 1) %
-      PANORAMAS.length
+    loadExperience(
+      currentIndex + 1
     );
-
-    resetAutoplayTimer();
 
   }
 
 
-  function previousPanorama() {
+  function previousExperience() {
 
-    markInteraction();
-
-    goToPanorama(
-      (
-        currentIndex -
-        1 +
-        PANORAMAS.length
-      ) %
-      PANORAMAS.length
+    loadExperience(
+      currentIndex - 1
     );
-
-    resetAutoplayTimer();
 
   }
 
 
-  nextButton.addEventListener(
+  prevBtn.addEventListener(
     "click",
-    nextPanorama
+    function(e) {
+
+      e.stopPropagation();
+
+      markInteraction();
+
+      previousExperience();
+
+    }
   );
 
 
-  prevButton.addEventListener(
+  nextBtn.addEventListener(
     "click",
-    previousPanorama
+    function(e) {
+
+      e.stopPropagation();
+
+      markInteraction();
+
+      nextExperience();
+
+    }
   );
 
 
-  /* ==========================================================================
-     INTERACTION
-  ========================================================================== */
+  /* ========================================================================
+     AUTOPLAY
+  ======================================================================== */
 
-  function markInteraction() {
+  function resetAutoplay() {
 
-    userHasInteracted =
-      true;
-
-    lastInteraction =
+    autoTimerStart =
       performance.now();
 
-    resetAutoplayTimer();
+  }
+
+
+  function pauseAutoplay() {
+
+    autoPausedUntil =
+      performance.now() +
+      AUTOPLAY_RESUME_DELAY;
+
+  }
+
+
+  function updateAutoplay(now) {
+
+    if (
+      now <
+      autoPausedUntil
+    ) {
+
+      progressBar.style.width =
+        "0%";
+
+      return;
+
+    }
+
+
+    const elapsed =
+      now -
+      autoTimerStart;
+
+
+    const progress =
+      clamp(
+        elapsed /
+        AUTO_CHANGE_TIME,
+        0,
+        1
+      );
+
+
+    progressBar.style.width =
+      (progress * 100)
+      + "%";
 
 
     if (
-      !dragHint.classList.contains(
-        "is-hidden"
-      )
+      elapsed >=
+      AUTO_CHANGE_TIME
     ) {
 
-      dragHint.classList.add(
-        "is-hidden"
-      );
+      nextExperience();
 
     }
 
   }
 
 
-  /* ==========================================================================
-     MOUSE
-  ========================================================================== */
-
-  stage.addEventListener(
-    "mousedown",
-    function(event) {
-
-      markInteraction();
-
-      isDragging = true;
-
-      stage.classList.add(
-        "is-dragging"
-      );
-
-
-      startX =
-        event.clientX;
-
-      startY =
-        event.clientY;
-
-      startLon =
-        lon;
-
-      startLat =
-        lat;
-
-    }
-  );
-
-
-  window.addEventListener(
-    "mousemove",
-    function(event) {
-
-      if (!isDragging) {
-        return;
-      }
-
-
-      const newLon =
-        startLon +
-        (
-          startX -
-          event.clientX
-        ) *
-        0.16;
-
-
-      const newLat =
-        startLat +
-        (
-          event.clientY -
-          startY
-        ) *
-        0.16;
-
-
-      velocityLon =
-        clamp(
-          newLon - lon,
-          -MAX_INERTIA,
-          MAX_INERTIA
-        );
-
-
-      velocityLat =
-        clamp(
-          newLat - lat,
-          -MAX_INERTIA,
-          MAX_INERTIA
-        );
-
-
-      lon = newLon;
-
-      lat = newLat;
-
-    }
-  );
-
-
-  window.addEventListener(
-    "mouseup",
-    function() {
-
-      isDragging = false;
-
-      stage.classList.remove(
-        "is-dragging"
-      );
-
-    }
-  );
-
-
-  /* ==========================================================================
-     TOUCH
-  ========================================================================== */
-
-  stage.addEventListener(
-    "touchstart",
-    function(event) {
-
-      markInteraction();
-
-
-      if (
-        event.touches.length === 1
-      ) {
-
-        isDragging = true;
-
-
-        startX =
-          event.touches[0].clientX;
-
-        startY =
-          event.touches[0].clientY;
-
-
-        startLon =
-          lon;
-
-        startLat =
-          lat;
-
-      }
-
-    },
-    {
-      passive: true
-    }
-  );
-
-
-  stage.addEventListener(
-    "touchmove",
-    function(event) {
-
-      if (
-        event.touches.length !== 1 ||
-        !isDragging
-      ) {
-
-        return;
-
-      }
-
-
-      const newLon =
-        startLon +
-        (
-          startX -
-          event.touches[0].clientX
-        ) *
-        0.16;
-
-
-      const newLat =
-        startLat +
-        (
-          event.touches[0].clientY -
-          startY
-        ) *
-        0.16;
-
-
-      velocityLon =
-        clamp(
-          newLon - lon,
-          -MAX_INERTIA,
-          MAX_INERTIA
-        );
-
-
-      velocityLat =
-        clamp(
-          newLat - lat,
-          -MAX_INERTIA,
-          MAX_INERTIA
-        );
-
-
-      lon = newLon;
-
-      lat = newLat;
-
-    },
-    {
-      passive: true
-    }
-  );
-
-
-  stage.addEventListener(
-    "touchend",
-    function() {
-
-      isDragging = false;
-
-    }
-  );
-
-
-  /* ==========================================================================
-     WHEEL ZOOM
-  ========================================================================== */
-
-  stage.addEventListener(
-    "wheel",
-    function(event) {
-
-      event.preventDefault();
-
-      markInteraction();
-
-
-      targetFov =
-        clamp(
-          targetFov +
-          event.deltaY *
-          0.04,
-
-          CONFIG.FOV_MIN,
-
-          CONFIG.FOV_MAX
-        );
-
-    },
-    {
-      passive: false
-    }
-  );
-
-
-  /* ==========================================================================
-     BUTTON ZOOM
-  ========================================================================== */
-
-  zoomIn.addEventListener(
-    "click",
-    function() {
-
-      markInteraction();
-
-      targetFov =
-        clamp(
-          targetFov - 10,
-          CONFIG.FOV_MIN,
-          CONFIG.FOV_MAX
-        );
-
-    }
-  );
-
-
-  zoomOut.addEventListener(
-    "click",
-    function() {
-
-      markInteraction();
-
-      targetFov =
-        clamp(
-          targetFov + 10,
-          CONFIG.FOV_MIN,
-          CONFIG.FOV_MAX
-        );
-
-    }
-  );
-
-
-  /* ==========================================================================
-     RECENTER
-  ========================================================================== */
-
-  recenter.addEventListener(
-    "click",
-    function() {
-
-      markInteraction();
-
-      lon = 0;
-
-      lat = 0;
-
-      targetFov = 84;
-
-    }
-  );
-
-
-  /* ==========================================================================
-     FULLSCREEN
-  ========================================================================== */
-
-  fullscreen.addEventListener(
-    "click",
-    function() {
-
-      markInteraction();
-
-
-      if (
-        !document.fullscreenElement
-      ) {
-
-        if (
-          stage.requestFullscreen
-        ) {
-
-          stage.requestFullscreen();
-
-        }
-
-      } else {
-
-        document.exitFullscreen();
-
-      }
-
-    }
-  );
-
-
-  document.addEventListener(
-    "fullscreenchange",
-    resize
-  );
-
-
-  /* ==========================================================================
+  /* ========================================================================
      RENDER LOOP
-  ========================================================================== */
+  ======================================================================== */
 
   function animate() {
 
@@ -991,7 +725,14 @@ const PANORAMAS = [
     );
 
 
-    if (!isDragging) {
+    const now =
+      performance.now();
+
+
+    updateAutoplay(now);
+
+
+    if (!isPointerDown) {
 
       if (
         Math.abs(velocityLon) >
@@ -1011,16 +752,17 @@ const PANORAMAS = [
         velocityLat *=
           INERTIA_FRICTION;
 
-      } else {
+      }
 
-        /*
-          Rotación continua suave.
-          Esto mantiene vivo el panorama
-          cuando el usuario no está interactuando.
-        */
+      else if (
+        userHasInteracted &&
+        now -
+          lastInteraction >
+          AUTOPLAY_RESUME_DELAY
+      ) {
 
         lon +=
-          CONFIG.AUTOROTATE_SPEED;
+          AUTOROTATE_SPEED;
 
       }
 
@@ -1028,12 +770,10 @@ const PANORAMAS = [
 
 
     lat =
-      Math.max(
+      clamp(
+        lat,
         -85,
-        Math.min(
-          85,
-          lat
-        )
+        85
       );
 
 
@@ -1053,15 +793,15 @@ const PANORAMAS = [
       new THREE.Vector3(
 
         500 *
-        Math.sin(phi) *
-        Math.cos(theta),
+          Math.sin(phi) *
+          Math.cos(theta),
 
         500 *
-        Math.cos(phi),
+          Math.cos(phi),
 
         500 *
-        Math.sin(phi) *
-        Math.sin(theta)
+          Math.sin(phi) *
+          Math.sin(theta)
 
       );
 
@@ -1073,16 +813,14 @@ const PANORAMAS = [
     );
 
 
-    camera.lookAt(
-      target
-    );
+    camera.lookAt(target);
 
 
     if (
       Math.abs(
         camera.fov -
         targetFov
-      ) > .05
+      ) > 0.05
     ) {
 
       camera.fov +=
@@ -1090,7 +828,8 @@ const PANORAMAS = [
           targetFov -
           camera.fov
         ) *
-        .15;
+        0.15;
+
 
       camera.updateProjectionMatrix();
 
@@ -1105,34 +844,565 @@ const PANORAMAS = [
   }
 
 
-  /* ==========================================================================
-     UTILIDAD
-  ========================================================================== */
+  /* ========================================================================
+     INTERACCIÓN
+  ======================================================================== */
 
-  function clamp(
-    value,
-    min,
-    max
+  function markInteraction() {
+
+    userHasInteracted =
+      true;
+
+
+    lastInteraction =
+      performance.now();
+
+
+    pauseAutoplay();
+
+
+    if (
+      !dragHint.classList.contains(
+        "is-hidden"
+      )
+    ) {
+
+      dragHint.classList.add(
+        "is-hidden"
+      );
+
+    }
+
+  }
+
+
+  function onPointerDown(
+    clientX,
+    clientY
   ) {
 
-    return Math.max(
-      min,
-      Math.min(
-        max,
-        value
-      )
+    isPointerDown =
+      true;
+
+
+    stageEl.classList.add(
+      "is-dragging"
+    );
+
+
+    pointerDownX =
+      clientX;
+
+    pointerDownY =
+      clientY;
+
+
+    pointerDownLon =
+      lon;
+
+    pointerDownLat =
+      lat;
+
+  }
+
+
+  function onPointerMove(
+    clientX,
+    clientY
+  ) {
+
+    if (!isPointerDown)
+      return;
+
+
+    const newLon =
+      (
+        pointerDownX -
+        clientX
+      ) *
+      0.16 +
+      pointerDownLon;
+
+
+    const newLat =
+      (
+        clientY -
+        pointerDownY
+      ) *
+      0.16 +
+      pointerDownLat;
+
+
+    velocityLon =
+      clamp(
+        newLon - lon,
+        -MAX_INERTIA,
+        MAX_INERTIA
+      );
+
+
+    velocityLat =
+      clamp(
+        newLat - lat,
+        -MAX_INERTIA,
+        MAX_INERTIA
+      );
+
+
+    lon =
+      newLon;
+
+    lat =
+      newLat;
+
+
+    markInteraction();
+
+  }
+
+
+  function onPointerUp() {
+
+    isPointerDown =
+      false;
+
+
+    stageEl.classList.remove(
+      "is-dragging"
     );
 
   }
 
 
-  /* ==========================================================================
-     START
-  ========================================================================== */
+  /* ========================================================================
+     MOUSE
+  ======================================================================== */
 
-  updateTimer();
+  stageEl.addEventListener(
+    "mousedown",
+    function(e) {
 
-  goToPanorama(0);
+      onPointerDown(
+        e.clientX,
+        e.clientY
+      );
+
+
+      markInteraction();
+
+    }
+  );
+
+
+  window.addEventListener(
+    "mousemove",
+    function(e) {
+
+      onPointerMove(
+        e.clientX,
+        e.clientY
+      );
+
+    }
+  );
+
+
+  window.addEventListener(
+    "mouseup",
+    onPointerUp
+  );
+
+
+  /* ========================================================================
+     TOUCH
+  ======================================================================== */
+
+  let pinchStartDist =
+    null;
+
+  let pinchStartFov =
+    null;
+
+
+  stageEl.addEventListener(
+    "touchstart",
+    function(e) {
+
+      markInteraction();
+
+
+      if (
+        e.touches.length === 1
+      ) {
+
+        onPointerDown(
+          e.touches[0].clientX,
+          e.touches[0].clientY
+        );
+
+      }
+
+
+      else if (
+        e.touches.length === 2
+      ) {
+
+        isPointerDown =
+          false;
+
+
+        pinchStartDist =
+          touchDistance(
+            e.touches
+          );
+
+
+        pinchStartFov =
+          targetFov;
+
+      }
+
+    },
+    { passive: true }
+  );
+
+
+  stageEl.addEventListener(
+    "touchmove",
+    function(e) {
+
+      if (
+        e.touches.length === 1 &&
+        isPointerDown
+      ) {
+
+        onPointerMove(
+          e.touches[0].clientX,
+          e.touches[0].clientY
+        );
+
+      }
+
+
+      else if (
+        e.touches.length === 2 &&
+        pinchStartDist
+      ) {
+
+        const dist =
+          touchDistance(
+            e.touches
+          );
+
+
+        const scale =
+          pinchStartDist /
+          dist;
+
+
+        targetFov =
+          clamp(
+            pinchStartFov *
+              scale,
+            FOV_MIN,
+            FOV_MAX
+          );
+
+
+        markInteraction();
+
+      }
+
+    },
+    { passive: true }
+  );
+
+
+  stageEl.addEventListener(
+    "touchend",
+    function(e) {
+
+      if (
+        e.touches.length === 0
+      ) {
+
+        onPointerUp();
+
+        pinchStartDist =
+          null;
+
+      }
+
+    }
+  );
+
+
+  function touchDistance(
+    touches
+  ) {
+
+    const dx =
+      touches[0].clientX -
+      touches[1].clientX;
+
+
+    const dy =
+      touches[0].clientY -
+      touches[1].clientY;
+
+
+    return Math.sqrt(
+      dx * dx +
+      dy * dy
+    );
+
+  }
+
+
+  /* ========================================================================
+     RUEDA
+  ======================================================================== */
+
+  stageEl.addEventListener(
+    "wheel",
+    function(e) {
+
+      e.preventDefault();
+
+      markInteraction();
+
+
+      targetFov =
+        clamp(
+          targetFov +
+            e.deltaY * 0.04,
+          FOV_MIN,
+          FOV_MAX
+        );
+
+    },
+    { passive: false }
+  );
+
+
+  /* ========================================================================
+     ZOOM
+  ======================================================================== */
+
+  document
+    .getElementById("zoom-in")
+    .addEventListener(
+      "click",
+      function() {
+
+        markInteraction();
+
+        targetFov =
+          clamp(
+            targetFov - 10,
+            FOV_MIN,
+            FOV_MAX
+          );
+
+      }
+    );
+
+
+  document
+    .getElementById("zoom-out")
+    .addEventListener(
+      "click",
+      function() {
+
+        markInteraction();
+
+        targetFov =
+          clamp(
+            targetFov + 10,
+            FOV_MIN,
+            FOV_MAX
+          );
+
+      }
+    );
+
+
+  /* ========================================================================
+     RECENTER
+  ======================================================================== */
+
+  document
+    .getElementById("recenter")
+    .addEventListener(
+      "click",
+      function() {
+
+        markInteraction();
+
+
+        const experience =
+          EXPERIENCES[currentIndex];
+
+
+        lon =
+          experience.lon;
+
+        lat =
+          experience.lat;
+
+        targetFov =
+          experience.fov;
+
+      }
+    );
+
+
+  /* ========================================================================
+     FULLSCREEN
+  ======================================================================== */
+
+  document
+    .getElementById("fullscreen-btn")
+    .addEventListener(
+      "click",
+      function() {
+
+        markInteraction();
+
+
+        if (
+          !document.fullscreenElement
+        ) {
+
+          const request =
+            stageEl.requestFullscreen ||
+            stageEl.webkitRequestFullscreen;
+
+
+          if (request) {
+
+            request.call(
+              stageEl
+            );
+
+          }
+
+        }
+
+        else {
+
+          const exit =
+            document.exitFullscreen ||
+            document.webkitExitFullscreen;
+
+
+          if (exit) {
+
+            exit.call(
+              document
+            );
+
+          }
+
+        }
+
+      }
+    );
+
+
+  /* ========================================================================
+     RESIZE
+  ======================================================================== */
+
+  window.addEventListener(
+    "resize",
+    resizeRenderer
+  );
+
+
+  document.addEventListener(
+    "fullscreenchange",
+    resizeRenderer
+  );
+
+
+  /* ========================================================================
+     NAVEGACIÓN DEL SITIO
+  ======================================================================== */
+
+  const navLinks =
+    document.querySelectorAll(
+      ".nav-link"
+    );
+
+
+  navLinks.forEach(
+    function(link) {
+
+      link.addEventListener(
+        "click",
+        function() {
+
+          navLinks.forEach(
+            function(item) {
+
+              item.classList.remove(
+                "is-active"
+              );
+
+            }
+          );
+
+
+          link.classList.add(
+            "is-active"
+          );
+
+        }
+      );
+
+    }
+  );
+
+
+  /* ========================================================================
+     WHATSAPP
+  ======================================================================== */
+
+  const cta =
+    document.getElementById(
+      "whatsapp-cta"
+    );
+
+
+  if (cta) {
+
+    const url =
+      "https://wa.me/" +
+      WHATSAPP_NUMBER +
+      "?text=" +
+      encodeURIComponent(
+        WHATSAPP_MESSAGE
+      );
+
+
+    cta.href =
+      url;
+
+  }
+
+
+  /* ========================================================================
+     INICIALIZACIÓN
+  ======================================================================== */
+
+  buildScene();
+
+  updateExperienceUI();
+
+  loadExperience(
+    0
+  );
 
 
   setTimeout(
@@ -1148,48 +1418,3 @@ const PANORAMAS = [
 
 
 })();
-
-
-/* ==========================================================================
-   WHATSAPP
-========================================================================== */
-
-(function setupWhatsApp() {
-
-  const button =
-    document.getElementById(
-      "whatsapp-cta"
-    );
-
-  if (!button) {
-    return;
-  }
-
-
-  const url =
-    "https://wa.me/" +
-    CONFIG.WHATSAPP_NUMBER +
-    "?text=" +
-    encodeURIComponent(
-      CONFIG.WHATSAPP_MESSAGE
-    );
-
-
-  button.href = url;
-
-  button.target = "_blank";
-
-  button.rel =
-    "noopener noreferrer";
-
-})();
-
-
-/* ==========================================================================
-   YEAR
-========================================================================== */
-
-document.getElementById(
-  "year"
-).textContent =
-  new Date().getFullYear();
