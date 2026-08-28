@@ -94,7 +94,7 @@ button {
 
 .viewer-logo {
   position: absolute;
-  bottom: 25px;
+  bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 20;
@@ -114,7 +114,7 @@ button {
 .experience-title {
   position: absolute;
   left: 50%;
-  bottom: 82px;
+  top: 82px;
   transform: translateX(-50%);
   z-index: 20;
 
