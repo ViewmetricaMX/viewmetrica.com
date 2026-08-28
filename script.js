@@ -49,7 +49,7 @@ const EXPERIENCES = [
 
     lon: 0,
     lat: 0,
-    fov: 84
+    fov: 500
   },
 
   {
