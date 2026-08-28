@@ -48,7 +48,7 @@ file: "assets/viewmetricamx_demo_360_exterior.jpg"
 {
 key: "restaurant",
 title: "RESTAURANT",
-file: "assets/viewmetricamx_demo_360_Restaurant.jpg"
+file: "assets/viewmetricamx_demo_360_restaurant.jpg"
 },
 
 {
