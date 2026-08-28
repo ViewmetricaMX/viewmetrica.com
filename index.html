@@ -4,19 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>ViewmetricaMX — Ingeniería de Visibilidad Local</title>
+  <title>ViewmetricaMX — Reality Intelligence</title>
 
   <meta
     name="description"
-    content="ViewmetricaMX digitaliza espacios físicos y los convierte en visibilidad, experiencias 360° e inteligencia local."
-  >
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet"
+    content="ViewmetricaMX digitaliza espacios físicos mediante experiencias 360°, visibilidad local e inteligencia geoespacial."
   >
 
   <link rel="stylesheet" href="style.css">
@@ -24,19 +16,19 @@
 
 <body>
 
-<!-- ============================================================
-     HERO / VISOR 360°
-============================================================ -->
-
 <main id="inicio">
 
-  <section class="hero-viewer">
+  <!-- ============================================================
+       VISOR 360°
+  ============================================================ -->
+
+  <section class="viewer-section">
 
     <div
       id="viewer-stage"
       class="viewer-stage"
       tabindex="0"
-      aria-label="Experiencia 360° ViewmetricaMX"
+      aria-label="Visor 360° interactivo"
     >
 
       <canvas id="pano-canvas"></canvas>
@@ -49,7 +41,7 @@
         >
       </div>
 
-      <!-- TÍTULO -->
+      <!-- EXPERIENCIA -->
       <div class="experience-title">
 
         <span id="experience-title">
@@ -57,8 +49,8 @@
         </span>
 
         <span
-          id="experience-counter"
           class="experience-counter"
+          id="experience-counter"
         >
           01 / 05
         </span>
@@ -66,7 +58,6 @@
       </div>
 
       <!-- FLECHAS -->
-
       <button
         id="viewer-prev"
         class="viewer-arrow viewer-arrow-left"
@@ -86,7 +77,6 @@
       </button>
 
       <!-- LOADING -->
-
       <div id="viewer-loading" class="viewer-loading">
 
         <div class="loading-spinner"></div>
@@ -98,16 +88,11 @@
       </div>
 
       <!-- HINT -->
-
-      <div
-        id="drag-hint"
-        class="drag-hint"
-      >
+      <div id="drag-hint" class="drag-hint">
         ARRASTRA PARA EXPLORAR
       </div>
 
       <!-- CONTROLES -->
-
       <div class="viewer-controls">
 
         <button
@@ -123,7 +108,7 @@
           id="recenter"
           class="viewer-control"
           type="button"
-          aria-label="Centrar"
+          aria-label="Centrar vista"
         >
           ◉
         </button>
@@ -148,20 +133,7 @@
 
       </div>
 
-      <!-- AUTOPLAY -->
-
-      <div class="autoplay-info">
-
-        <span>
-          CAMBIO AUTOMÁTICO
-        </span>
-
-        <span id="autoplay-countdown">
-          30
-        </span>
-
-      </div>
-
+      <!-- PROGRESO AUTOPLAY -->
       <div class="autoplay-progress">
         <div id="autoplay-progress-bar"></div>
       </div>
@@ -172,38 +144,17 @@
 
 
   <!-- ============================================================
-       NAVEGACIÓN
+       MENÚ
   ============================================================ -->
 
-  <nav class="main-nav" aria-label="Navegación principal">
+  <nav class="main-nav" id="siteNav">
 
-    <a href="#inicio" class="nav-link active">
-      INICIO
-    </a>
-
-    <a href="#soluciones" class="nav-link">
-      SOLUCIONES
-    </a>
-
-    <a href="#metodo" class="nav-link">
-      MÉTODO
-    </a>
-
-    <a href="#servicios" class="nav-link">
-      SERVICIOS
-    </a>
-
-    <a href="#productos" class="nav-link">
-      PRODUCTOS
-    </a>
-
-    <a href="#inteligencia" class="nav-link">
-      INTELIGENCIA
-    </a>
-
-    <a href="#contacto" class="nav-link">
-      CONTACTO
-    </a>
+    <a href="#inicio" class="nav-link">INICIO</a>
+    <a href="#soluciones" class="nav-link">SOLUCIONES</a>
+    <a href="#experiencia" class="nav-link">EXPERIENCIA</a>
+    <a href="#tecnologia" class="nav-link">MÉTODO</a>
+    <a href="#inteligencia" class="nav-link">INTELIGENCIA</a>
+    <a href="#contacto" class="nav-link">CONTACTO</a>
 
   </nav>
 
@@ -231,7 +182,7 @@
 
         </div>
 
-        <div class="intro-copy">
+        <div>
 
           <p>
             Los clientes buscan negocios en Google.
@@ -276,13 +227,10 @@
 
 
   <!-- ============================================================
-       SOLUCIONES
+       PILLARS
   ============================================================ -->
 
-  <section
-    class="section"
-    id="soluciones"
-  >
+  <section class="section" id="soluciones">
 
     <div class="wrap">
 
@@ -307,17 +255,13 @@
 
         <article class="pillar">
 
-          <div class="num">
-            01
-          </div>
+          <div class="num">01</div>
 
-          <h3>
-            Visibilidad
-          </h3>
+          <h3>Visibilidad</h3>
 
           <p>
-            Ayudamos a que el negocio sea encontrado y
-            entendido correctamente en su entorno digital.
+            Ayudamos a que el negocio sea encontrado y entendido
+            correctamente en su entorno digital.
           </p>
 
           <ul>
@@ -332,17 +276,12 @@
 
         <article class="pillar">
 
-          <div class="num">
-            02
-          </div>
+          <div class="num">02</div>
 
-          <h3>
-            Experiencia
-          </h3>
+          <h3>Experiencia</h3>
 
           <p>
-            Convertimos espacios físicos en experiencias
-            digitales que pueden explorarse.
+            Convertimos espacios físicos en experiencias digitales.
           </p>
 
           <ul>
@@ -357,13 +296,9 @@
 
         <article class="pillar">
 
-          <div class="num">
-            03
-          </div>
+          <div class="num">03</div>
 
-          <h3>
-            Inteligencia
-          </h3>
+          <h3>Inteligencia</h3>
 
           <p>
             Transformamos información espacial y digital
@@ -387,13 +322,71 @@
 
 
   <!-- ============================================================
-       MÉTODO
+       EXPERIENCIA
   ============================================================ -->
 
-  <section
-    class="section section-dark"
-    id="metodo"
-  >
+  <section class="section content-dark" id="experiencia">
+
+    <div class="wrap">
+
+      <div class="section-head reveal">
+
+        <div class="eyebrow">
+          EXPERIENCIA DIGITAL
+        </div>
+
+        <h2>
+          El espacio deja de ser una fotografía.
+        </h2>
+
+        <p>
+          Se convierte en una experiencia que el usuario
+          puede explorar, comprender y recordar.
+        </p>
+
+      </div>
+
+      <div class="experience-grid reveal">
+
+        <div class="experience-card">
+          <span>01</span>
+          <h3>Exploración</h3>
+          <p>
+            El visitante puede recorrer el espacio de forma
+            intuitiva desde cualquier dispositivo.
+          </p>
+        </div>
+
+        <div class="experience-card">
+          <span>02</span>
+          <h3>Contexto</h3>
+          <p>
+            El espacio se presenta dentro de su contexto real,
+            no como una imagen aislada.
+          </p>
+        </div>
+
+        <div class="experience-card">
+          <span>03</span>
+          <h3>Conversión</h3>
+          <p>
+            La experiencia conduce naturalmente hacia
+            el siguiente paso.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ============================================================
+       METHOD
+  ============================================================ -->
+
+  <section class="section" id="tecnologia">
 
     <div class="wrap">
 
@@ -411,91 +404,47 @@
 
       <div class="method-list reveal">
 
-        <article class="method-item">
-
-          <div class="num">
-            01 / OBSERVAMOS
-          </div>
-
-          <h3>
-            Diagnóstico
-          </h3>
-
+        <div class="method-item">
+          <div class="num">01 / OBSERVAMOS</div>
+          <h3>Diagnóstico</h3>
           <p>
-            Analizamos el espacio, el negocio y su contexto geográfico.
+            Analizamos el espacio, negocio y contexto geográfico.
           </p>
+        </div>
 
-        </article>
-
-
-        <article class="method-item">
-
-          <div class="num">
-            02 / CAPTURAMOS
-          </div>
-
-          <h3>
-            Digitalización
-          </h3>
-
+        <div class="method-item">
+          <div class="num">02 / CAPTURAMOS</div>
+          <h3>Digitalización</h3>
           <p>
             Digitalizamos el espacio mediante fotografía,
             360° y contenido visual.
           </p>
+        </div>
 
-        </article>
-
-
-        <article class="method-item">
-
-          <div class="num">
-            03 / CONECTAMOS
-          </div>
-
-          <h3>
-            Integración
-          </h3>
-
+        <div class="method-item">
+          <div class="num">03 / CONECTAMOS</div>
+          <h3>Integración</h3>
           <p>
             Integramos el espacio con mapas, plataformas
             y canales digitales.
           </p>
+        </div>
 
-        </article>
-
-
-        <article class="method-item">
-
-          <div class="num">
-            04 / MEDIMOS
-          </div>
-
-          <h3>
-            Analítica
-          </h3>
-
+        <div class="method-item">
+          <div class="num">04 / MEDIMOS</div>
+          <h3>Analítica</h3>
           <p>
             Analizamos visibilidad, interacción y comportamiento.
           </p>
+        </div>
 
-        </article>
-
-
-        <article class="method-item">
-
-          <div class="num">
-            05 / OPTIMIZAMOS
-          </div>
-
-          <h3>
-            Iteración
-          </h3>
-
+        <div class="method-item">
+          <div class="num">05 / OPTIMIZAMOS</div>
+          <h3>Iteración</h3>
           <p>
             Convertimos los datos en decisiones y oportunidades.
           </p>
-
-        </article>
+        </div>
 
       </div>
 
@@ -505,13 +454,10 @@
 
 
   <!-- ============================================================
-       SERVICIOS
+       SERVICES
   ============================================================ -->
 
-  <section
-    class="section"
-    id="servicios"
-  >
+  <section class="section">
 
     <div class="wrap">
 
@@ -526,7 +472,6 @@
         </h2>
 
       </div>
-
 
       <div class="services reveal">
 
@@ -574,7 +519,7 @@
             <span>Análisis comercial</span>
             <span>Competencia</span>
             <span>Ubicación</span>
-            <span>Oportunidades</span>
+            <span>Oportunidades de mercado</span>
           </div>
 
         </div>
@@ -619,13 +564,10 @@
 
 
   <!-- ============================================================
-       PRODUCTOS
+       PRODUCTS
   ============================================================ -->
 
-  <section
-    class="section section-dark"
-    id="productos"
-  >
+  <section class="section">
 
     <div class="wrap">
 
@@ -640,7 +582,6 @@
         </h2>
 
       </div>
-
 
       <div class="products reveal">
 
@@ -659,9 +600,17 @@
             su presencia digital.
           </p>
 
-          <a href="#contacto" class="product-link">
-            Solicitar información →
-          </a>
+          <div class="price-cta">
+
+            <div class="price">
+              Cotización a solicitud
+            </div>
+
+            <a href="#contacto">
+              Solicitar información
+            </a>
+
+          </div>
 
         </article>
 
@@ -681,9 +630,17 @@
             digital más completa y medible.
           </p>
 
-          <a href="#contacto" class="product-link">
-            Solicitar información →
-          </a>
+          <div class="price-cta">
+
+            <div class="price">
+              Cotización a solicitud
+            </div>
+
+            <a href="#contacto">
+              Solicitar información
+            </a>
+
+          </div>
 
         </article>
 
@@ -703,9 +660,17 @@
             de visibilidad, experiencia e inteligencia geoespacial.
           </p>
 
-          <a href="#contacto" class="product-link">
-            Solicitar información →
-          </a>
+          <div class="price-cta">
+
+            <div class="price">
+              Cotización a solicitud
+            </div>
+
+            <a href="#contacto">
+              Solicitar información
+            </a>
+
+          </div>
 
         </article>
 
@@ -720,10 +685,7 @@
        DEMO 360
   ============================================================ -->
 
-  <section
-    class="section"
-    id="demo360"
-  >
+  <section class="section" id="demo360">
 
     <div class="wrap">
 
@@ -738,30 +700,22 @@
         </h2>
 
         <p>
-          La mejor manera de entender una experiencia es vivirla.
+          La mejor manera de entender una experiencia
+          es vivirla.
         </p>
 
       </div>
 
-
       <div class="demo-viewer reveal">
 
         <iframe
+          id="demoFrame"
           src="about:blank"
-          id="demo-frame"
-          title="Demostración 360° ViewmetricaMX"
+          title="Demostración de recorrido virtual 360°"
           loading="lazy"
-          allow="xr-spatial-tracking; gyroscope; accelerometer"
+          allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer"
           allowfullscreen
         ></iframe>
-
-        <a
-          href="#"
-          id="fullscreenTour"
-          class="btn btn-primary"
-        >
-          EXPLORAR EN PANTALLA COMPLETA
-        </a>
 
       </div>
 
@@ -792,12 +746,12 @@
         </h2>
 
         <p>
-          Viewmetrica trabaja la dimensión geográfica del negocio
-          como una capa de inteligencia, no como un pin en un mapa.
+          Viewmetrica trabaja la dimensión geográfica
+          del negocio como una capa de inteligencia,
+          no como un pin en un mapa.
         </p>
 
       </div>
-
 
       <div class="equation reveal">
 
@@ -831,7 +785,10 @@
        REALITY INTELLIGENCE
   ============================================================ -->
 
-  <section class="section ri-section">
+  <section
+    class="section ri-section"
+    id="reality-intelligence"
+  >
 
     <div class="wrap">
 
@@ -843,10 +800,10 @@
 
         La realidad física genera datos.
         Nosotros los convertimos en
-        <span>visibilidad</span>,
-        <span>experiencia</span>
+        <span class="accent-word">visibilidad</span>,
+        <span class="accent-word">experiencia</span>
         e
-        <span>inteligencia</span>.
+        <span class="accent-word">inteligencia</span>.
 
       </p>
 
@@ -864,13 +821,10 @@
 
 
   <!-- ============================================================
-       DIFERENCIADOR
+       DIFFERENTIATOR
   ============================================================ -->
 
-  <section
-    class="section"
-    id="diferenciador"
-  >
+  <section class="section" id="nosotros">
 
     <div class="wrap">
 
@@ -887,7 +841,6 @@
         </h2>
 
       </div>
-
 
       <div class="compare reveal">
 
@@ -951,31 +904,35 @@
       </div>
 
       <h2 class="reveal">
+
         Tu espacio ya existe.
         <br>
         Ahora hagámoslo visible.
+
       </h2>
 
       <p class="sub reveal">
-        Agenda una conversación y evaluamos cómo se puede
-        digitalizar tu espacio.
+
+        Agenda una conversación y evaluamos cómo se ve
+        la digitalización de tu negocio.
+
       </p>
 
       <div class="final-actions reveal">
 
         <a
           href="#"
-          id="whatsappCta"
           class="btn btn-primary"
+          id="whatsappCta"
         >
-          HABLAR CON VIEWMETRICA
+          Hablar con Viewmetrica
         </a>
 
         <a
           href="#soluciones"
           class="btn btn-ghost"
         >
-          EXPLORAR SOLUCIONES
+          Explorar nuestras soluciones
         </a>
 
       </div>
@@ -984,124 +941,93 @@
 
   </section>
 
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+
+  <footer>
+
+    <div class="wrap">
+
+      <div class="footer-top">
+
+        <div class="footer-brand">
+
+          <img
+            src="assets/Logo_ViewmetricaMX_glow.png"
+            alt="ViewmetricaMX"
+          >
+
+          <p>
+            Reality Intelligence — Ingeniería de
+            Visibilidad Local.
+            Comarca Lagunera, México.
+          </p>
+
+        </div>
+
+
+        <div class="footer-col">
+
+          <h5>Sitio</h5>
+
+          <a href="#soluciones">Soluciones</a>
+          <a href="#experiencia">Experiencia</a>
+          <a href="#inteligencia">Inteligencia</a>
+          <a href="#contacto">Contacto</a>
+
+        </div>
+
+
+        <div class="footer-col">
+
+          <h5>Canal</h5>
+
+          <a href="#" id="footerWhatsapp">
+            WhatsApp
+          </a>
+
+          <a href="#" id="footerMaps">
+            Google Maps
+          </a>
+
+        </div>
+
+
+        <div class="footer-col">
+
+          <h5>Legal</h5>
+
+          <a href="#">
+            Aviso de privacidad
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <div class="footer-bottom">
+
+        <span>
+          © <span id="year"></span>
+          ViewmetricaMX.
+          Todos los derechos reservados.
+        </span>
+
+        <span>
+          REALITY INTELLIGENCE ·
+          INGENIERÍA DE VISIBILIDAD LOCAL
+        </span>
+
+      </div>
+
+    </div>
+
+  </footer>
+
 </main>
-
-
-<!-- ============================================================
-     FOOTER
-============================================================ -->
-
-<footer>
-
-  <div class="wrap">
-
-    <div class="footer-top">
-
-      <div class="footer-brand">
-
-        <img
-          src="assets/Logo_ViewmetricaMX_glow.png"
-          alt="ViewmetricaMX"
-        >
-
-        <p>
-          Reality Intelligence —
-          Ingeniería de Visibilidad Local.
-          Comarca Lagunera, México.
-        </p>
-
-      </div>
-
-
-      <div class="footer-col">
-
-        <h5>
-          Sitio
-        </h5>
-
-        <a href="#soluciones">
-          Soluciones
-        </a>
-
-        <a href="#metodo">
-          Método
-        </a>
-
-        <a href="#servicios">
-          Servicios
-        </a>
-
-        <a href="#contacto">
-          Contacto
-        </a>
-
-      </div>
-
-
-      <div class="footer-col">
-
-        <h5>
-          Experiencia
-        </h5>
-
-        <a href="#demo360">
-          Demo 360°
-        </a>
-
-        <a href="#inteligencia">
-          Geointelligence
-        </a>
-
-        <a href="#productos">
-          Productos
-        </a>
-
-      </div>
-
-
-      <div class="footer-col">
-
-        <h5>
-          Contacto
-        </h5>
-
-        <a
-          href="#"
-          id="footerWhatsapp"
-        >
-          WhatsApp
-        </a>
-
-        <a
-          href="#"
-          id="footerMaps"
-        >
-          Google Maps
-        </a>
-
-      </div>
-
-    </div>
-
-
-    <div class="footer-bottom">
-
-      <span>
-        © <span id="year"></span>
-        ViewmetricaMX.
-        Todos los derechos reservados.
-      </span>
-
-      <span>
-        REALITY INTELLIGENCE ·
-        INGENIERÍA DE VISIBILIDAD LOCAL
-      </span>
-
-    </div>
-
-  </div>
-
-</footer>
 
 
 <!-- ============================================================
