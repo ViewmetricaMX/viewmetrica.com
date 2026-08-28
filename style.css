@@ -104,7 +104,7 @@ button {
 .viewer-logo img {
   display: block;
   width: min(550px, 32vw);
-  max-height: 90px;
+  max-height: 500px;
   object-fit: contain;
 }
 
