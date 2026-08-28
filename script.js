@@ -16,14 +16,7 @@ WHATSAPP_MESSAGE:
 
 GOOGLE_MAPS_URL: https://maps.app.goo.gl/sUyCjnnk6xXTh5Ga9#",
 
-/*
 
-* Tiempo entre cambios automáticos.
-*
-* 180000 = 3 minutos
-* 10000  = 10 segundos para pruebas
-  */
-  AUTO_CHANGE_TIME: 180000,
 
 };
 
