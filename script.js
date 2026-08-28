@@ -14,7 +14,7 @@ WHATSAPP_NUMBER: "528714005421",
 WHATSAPP_MESSAGE:
 "Hola, vi la experiencia de ViewmetricaMX y me gustaría conocer cómo podría aplicarse a mi negocio.",
 
-GOOGLE_MAPS_URL: "#",
+GOOGLE_MAPS_URL: https://maps.app.goo.gl/sUyCjnnk6xXTh5Ga9#",
 
 /*
 
@@ -23,7 +23,7 @@ GOOGLE_MAPS_URL: "#",
 * 180000 = 3 minutos
 * 10000  = 10 segundos para pruebas
   */
-  AUTO_CHANGE_TIME: 180000
+  AUTO_CHANGE_TIME: 180000,
 
 };
 
