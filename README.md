@@ -1,458 +1,658 @@
-# ViewMetricaMX — Demos 360°
+# ViewmetricaMX — Demo 360° / Reality Intelligence
 
-Colección de demos interactivos 360° desarrollados por **ViewMetricaMX** para mostrar aplicaciones de recorridos virtuales, fotografía 360° y experiencias de navegación inmersiva.
+## Descripción
 
-## Demos
+Demo web de **ViewmetricaMX** orientada a presentar visualmente el concepto de **Reality Intelligence**: la transformación de espacios físicos en activos digitales de visibilidad, experiencia e inteligencia.
 
-Los proyectos están organizados bajo una misma estructura visual y técnica:
+El sitio combina un **visor panorámico 360° interactivo** con una landing institucional de enfoque comercial.
 
-1. `viewmetricamx_demo_360_patrimonio_cultural`
-2. `viewmetricamx_demo_360_exterior`
-3. `viewmetricamx_demo_360_Restaurant`
-4. `viewmetricamx_demo_360_salon`
-5. `viewmetricamx_demo_360_universidad`
+La experiencia está diseñada para mostrar a un prospecto cómo Viewmetrica puede digitalizar un espacio y conectarlo con su ecosistema digital.
 
 ---
 
-## Estructura del proyecto
+## Concepto
 
-Cada demo utiliza una estructura independiente:
+> **La realidad ya es digital. Nosotros la hacemos visible.**
+
+Viewmetrica no se presenta únicamente como un servicio de fotografía 360°.
+
+La propuesta integra tres capas:
+
+### 01 — Visibilidad
+
+Ayudar a que un negocio sea encontrado y entendido correctamente en su entorno digital.
+
+- Google Maps
+- Google Business Profile
+- SEO local
+- Contenido georreferenciado
+
+### 02 — Experiencia
+
+Convertir espacios físicos en experiencias digitales.
+
+- Fotografía 360°
+- Recorridos virtuales
+- Experiencias inmersivas
+- Landing pages
+- Visualización espacial
+
+### 03 — Inteligencia
+
+Transformar información espacial y digital en conocimiento accionable.
+
+- Análisis geoespacial
+- Inteligencia comercial
+- Métricas de comportamiento
+- Competencia
+- Oportunidades de mercado
+
+---
+
+# Visor 360°
+
+El visor es el elemento principal de la experiencia.
+
+Se encuentra en la parte superior de la página y ocupa el protagonismo visual inicial.
+
+## Características
+
+- Panorama 360° mediante Three.js
+- Navegación horizontal mediante arrastre
+- Soporte táctil
+- Zoom con rueda del mouse
+- Zoom mediante controles
+- Recentrado
+- Pantalla completa
+- Inercia después del arrastre
+- Auto-rotación
+- Flechas de navegación
+- Contador de experiencias
+- Barra de progreso de cambio automático
+- Carga dinámica de panoramas
+- Sistema de caché de texturas
+- Fallback para navegadores sin WebGL
+
+---
+
+# Experiencias 360°
+
+Actualmente el visor contiene cinco experiencias:
+
+| # | Experiencia |
+|---|---|
+| 01 | Patrimonio Cultural |
+| 02 | Exterior |
+| 03 | Restaurant |
+| 04 | Salón |
+| 05 | Universidad |
+
+Las experiencias funcionan mediante navegación con flechas.
+
+El usuario puede cambiar manualmente entre ellas.
+
+Si el usuario no interactúa durante el periodo configurado, el visor cambia automáticamente a la siguiente experiencia.
+
+La navegación manual reinicia el temporizador de reproducción automática.
+
+---
+
+# Estructura visual
+
+La página sigue una estructura de presentación institucional:
 
 ```text
-demo/
+VISOR 360°
+      ↓
+MENÚ PRINCIPAL
+      ↓
+INTRO / PROBLEMA
+      ↓
+TRES CAPAS DE VIEWMETRICA
+      ↓
+MÉTODO VIEWMETRICA
+      ↓
+SERVICIOS
+      ↓
+PRODUCTOS
+      ↓
+DEMOSTRACIÓN 360°
+      ↓
+GEOINTELLIGENCE
+      ↓
+REALITY INTELLIGENCE
+      ↓
+DIFERENCIADOR
+      ↓
+CTA FINAL
+      ↓
+FOOTER
+```
+
+---
+
+# Secciones
+
+## Intro / Bridge
+
+Presenta el problema que Viewmetrica busca resolver:
+
+Los clientes descubren negocios mediante Google, fotografías, mapas y otros canales digitales antes de visitar físicamente un espacio.
+
+Viewmetrica plantea la desconexión entre:
+
+```text
+REALIDAD FÍSICA
+        ↓
+CAPTURA
+        ↓
+DIGITALIZACIÓN
+        ↓
+VISIBILIDAD
+        ↓
+EXPERIENCIA
+        ↓
+DATOS
+```
+
+---
+
+## Soluciones
+
+Presenta las tres capas principales:
+
+### Visibilidad
+Presencia digital y descubrimiento.
+
+### Experiencia
+Digitalización e interacción con el espacio.
+
+### Inteligencia
+Análisis espacial, comercial y competitivo.
+
+---
+
+# Método Viewmetrica
+
+El proceso se presenta como un sistema de cinco etapas:
+
+```text
+01 / OBSERVAMOS
+Diagnóstico
+
+02 / CAPTURAMOS
+Digitalización
+
+03 / CONECTAMOS
+Integración
+
+04 / MEDIMOS
+Analítica
+
+05 / OPTIMIZAMOS
+Iteración
+```
+
+La intención es comunicar que Viewmetrica no vende únicamente piezas aisladas, sino un proceso.
+
+---
+
+# Servicios
+
+Los servicios se organizan por capas:
+
+### Presencia Digital
+- Google Business Profile
+- Google Maps
+- SEO local
+- Contenido visual
+
+### Experiencias 360°
+- Fotografía 360°
+- Recorridos virtuales
+- Experiencias inmersivas
+
+### Inteligencia Geoespacial
+- Análisis comercial
+- Competencia
+- Ubicación
+- Oportunidades de mercado
+
+### Digital Experience
+- Landing pages
+- Visualización espacial
+- Integración de mapas
+
+### Analítica
+- Métricas de visibilidad
+- Interacciones
+- Reportes
+
+---
+
+# Productos
+
+La escalera comercial contempla tres niveles:
+
+## IMPULSO
+
+**Presencia Digital Esencial**
+
+Pensado para negocios que necesitan mejorar rápidamente su representación digital.
+
+## GROWTH
+
+**Visibilidad + Experiencia + Seguimiento**
+
+Pensado para negocios que quieren construir una presencia digital más completa y medible.
+
+## LEADERSHIP
+
+**Inteligencia y transformación digital**
+
+Pensado para empresas que requieren una estrategia avanzada de visibilidad, experiencia e inteligencia geoespacial.
+
+Los precios pueden modificarse directamente desde la configuración del sitio.
+
+---
+
+# GeoIntelligence
+
+La ubicación se presenta como una capa de inteligencia.
+
+El concepto central es:
+
+```text
+NEGOCIO
++
+UBICACIÓN
++
+COMPETENCIA
++
+VISIBILIDAD
++
+COMPORTAMIENTO
+=
+INTELIGENCIA LOCAL
+```
+
+Esta sección conecta el servicio actual de Viewmetrica con la evolución futura hacia inteligencia comercial y geoespacial.
+
+---
+
+# Reality Intelligence
+
+Concepto central de la marca:
+
+> La realidad física genera datos. Nosotros los convertimos en visibilidad, experiencia e inteligencia.
+
+Viewmetrica busca construir una capa digital sobre el mundo físico.
+
+El espacio deja de ser solamente un lugar físico y se convierte en un activo digital que puede:
+
+- descubrirse;
+- explorarse;
+- medirse;
+- conectarse;
+- analizarse;
+- optimizarse.
+
+---
+
+# Diferenciador
+
+La propuesta diferencia Viewmetrica del marketing tradicional.
+
+### Marketing tradicional
+
+```text
+Publicidad
+    ↓
+Campaña
+    ↓
+Tráfico
+    ↓
+Termina
+```
+
+### Viewmetrica
+
+```text
+Espacio físico
+    ↓
+Digitalización
+    ↓
+Presencia
+    ↓
+Experiencia
+    ↓
+Datos
+    ↓
+Optimización
+```
+
+La idea central:
+
+> **No hacemos marketing para espacios. Digitalizamos el espacio.**
+
+---
+
+# Casos
+
+La sección **Casos / Case Studies fue eliminada intencionalmente** de esta versión.
+
+Los demos individuales funcionan como evidencia visual independiente y no como casos de estudio dentro de la landing institucional.
+
+---
+
+# Identidad visual
+
+La interfaz utiliza una estética:
+
+- fondo negro;
+- tipografía blanca;
+- turquesa brillante;
+- contrastes elevados;
+- diseño limpio;
+- estética editorial / tecnológica;
+- elementos geométricos discretos;
+- animaciones suaves;
+- ausencia de fondos azules predominantes.
+
+El turquesa funciona como color de acento principal.
+
+El diseño busca transmitir:
+
+**precisión + espacio + tecnología + inteligencia**
+
+sin caer en una estética excesivamente futurista.
+
+---
+
+# Logo
+
+El visor utiliza el siguiente recurso:
+
+```text
+assets/Logo_ViewmetricaMX_glow.png
+```
+
+El logo se encuentra integrado dentro del visor, en la zona superior central.
+
+---
+
+# Assets
+
+Los panoramas se almacenan dentro de:
+
+```text
+/assets/
+```
+
+Los nombres siguen una estructura SEO-friendly.
+
+Ejemplo:
+
+```text
+assets/
+├── Logo_ViewmetricaMX_glow.png
+├── viewmetricamx_demo_360_patrimonio_cultural...
+├── viewmetricamx_demo_360_exterior...
+├── viewmetricamx_demo_360_Restaurant...
+├── viewmetricamx_demo_360_salon...
+└── viewmetricamx_demo_360_universidad...
+```
+
+Los nombres reales utilizados por el visor deben coincidir exactamente con las rutas declaradas en `script.js`.
+
+---
+
+# Estructura de archivos
+
+La estructura recomendada del proyecto es:
+
+```text
+viewmetrica-demo/
 │
 ├── index.html
 ├── style.css
 ├── script.js
 │
 └── assets/
+    ├── Logo_ViewmetricaMX_glow.png
     ├── panorama-01.jpg
     ├── panorama-02.jpg
     ├── panorama-03.jpg
-    └── ...
+    ├── panorama-04.jpg
+    └── panorama-05.jpg
 ```
 
-### `index.html`
+---
 
-Contiene:
+# Tecnologías
 
-- Header
-- Logo de ViewMetricaMX
-- Visor panorámico 360°
-- Controles de navegación
-- Información comercial
-- Bloques de beneficios
-- Llamado a la acción
-- Footer
+El proyecto utiliza:
 
-### `style.css`
-
-Controla:
-
-- Diseño responsive
-- Tipografía
-- Espaciado
-- Visor
-- Controles
-- Flechas
-- Contador
-- Animaciones
-- Bloques informativos
-- Adaptación para dispositivos móviles
-
-### `script.js`
-
-Controla:
-
+- HTML5
+- CSS3
+- JavaScript
 - Three.js
-- Carga de panoramas
-- Navegación entre vistas
-- Flechas
-- Autonavegación
-- Contador de tiempo
-- Drag con mouse
-- Gestos táctiles
-- Zoom
-- Pantalla completa
-- Inercia del movimiento
-- WhatsApp
-- Animaciones de aparición
+- WebGL
+- Intersection Observer API
+- Fullscreen API
+- WhatsApp deep links
 
----
-
-# Visor 360°
-
-El visor se encuentra en la parte superior de la página para que sea el elemento visual principal.
-
-La estructura conceptual es:
-
-```text
-┌─────────────────────────────────────┐
-│             VISOR 360°              │
-│                                     │
-│          ←             →            │
-│                                     │
-│             01 / 05                 │
-│        Cambio automático            │
-└─────────────────────────────────────┘
-
-              LOGO
-
-        Información principal
-
-      ┌──────────┐ ┌──────────┐
-      │ Beneficio│ │ Beneficio│
-      └──────────┘ └──────────┘
-
-      ┌──────────┐ ┌──────────┐
-      │ Beneficio│ │ Beneficio│
-      └──────────┘ └──────────┘
-
-          LLAMADO A LA ACCIÓN
-```
-
-La intención es que el visitante **primero experimente el espacio y después conozca la propuesta**.
-
----
-
-# Navegación
-
-La navegación principal ya no depende de una barra de botones por área.
-
-El visor utiliza:
-
-- Flecha izquierda
-- Flecha derecha
-- Contador de vistas
-- Cambio automático
-
-Ejemplo:
-
-```text
-←                         →
-             02 / 05
-```
-
-El usuario puede recorrer manualmente las vistas mediante las flechas.
-
----
-
-# Autonavegación
-
-Si el visitante permanece inactivo, el visor puede cambiar automáticamente de panorama.
-
-La lógica prevista es:
-
-```text
-Usuario entra
-     ↓
-Panorama 01
-     ↓
-Espera
-     ↓
-Panorama 02
-     ↓
-Espera
-     ↓
-Panorama 03
-     ↓
-...
-```
-
-Cuando el usuario interactúa con el visor:
-
-```text
-Mouse / Touch / Flecha
-          ↓
-Se detiene la autonavegación
-          ↓
-Usuario controla el recorrido
-```
-
-Después del periodo definido de inactividad, la navegación automática puede reanudarse.
-
-El tiempo de espera se controla desde `script.js`.
-
----
-
-# Assets
-
-Los panoramas deben colocarse dentro de:
-
-```text
-/assets/
-```
-
-Se recomienda utilizar nombres descriptivos y orientados a SEO.
-
-Ejemplo:
-
-```text
-restaurant_garufa_parrilla_argentina_torreon_entrada_360.jpg
-restaurant_garufa_parrilla_argentina_torreon_interior_360.jpg
-restaurant_garufa_parrilla_argentina_torreon_cava_360.jpg
-restaurant_garufa_parrilla_argentina_torreon_salon_principal_360.jpg
-restaurant_garufa_parrilla_argentina_torreon_toilets_360.jpg
-```
-
-### Recomendación
-
-Mantener una nomenclatura consistente:
-
-```text
-[tipo]_[nombre]_[ciudad]_[area]_360.jpg
-```
-
-Esto facilita posteriormente:
-
-- Organización
-- Mantenimiento
-- SEO
-- Sustitución de panoramas
-- Automatización de proyectos
+Three.js se carga mediante CDN.
 
 ---
 
 # Three.js
 
-El visor utiliza Three.js para renderizar las fotografías panorámicas.
-
-La esfera se configura como interior de una esfera mediante:
+El visor utiliza una esfera panorámica invertida:
 
 ```javascript
 geometry.scale(1, 1, -1);
 ```
 
-Las panorámicas se muestran mediante un `MeshBasicMaterial`.
+Esto permite visualizar correctamente la textura panorámica desde el interior de la esfera.
 
-Las texturas utilizan espacio de color sRGB cuando está disponible:
+La textura se configura para trabajar en espacio de color sRGB cuando la versión de Three.js disponible lo permite.
+
+---
+
+# Configuración del visor
+
+Las principales variables configurables se encuentran al inicio de `script.js`.
+
+Entre ellas:
 
 ```javascript
-texture.colorSpace = THREE.SRGBColorSpace;
+AUTOROTATE_SPEED
+AUTOROTATE_RESUME_DELAY
+FOV_MIN
+FOV_MAX
 ```
+
+El temporizador de cambio automático debe mantenerse centralizado para poder modificar fácilmente el comportamiento del demo.
+
+---
+
+# Navegación automática
+
+El sistema debe seguir esta lógica:
+
+```text
+Usuario entra
+      ↓
+Experiencia 01
+      ↓
+Temporizador
+      ↓
+¿Usuario interactuó?
+   ↙          ↘
+ NO           SÍ
+ ↓             ↓
+cambiar      reiniciar
+experiencia  temporizador
+ ↓
+siguiente experiencia
+```
+
+La interacción del usuario incluye:
+
+- arrastrar;
+- tocar;
+- zoom;
+- recenter;
+- flechas;
+- cambio de experiencia.
+
+Cuando existe interacción, el temporizador debe reiniciarse.
+
+---
+
+# CTA
+
+El CTA principal dirige al usuario a WhatsApp.
+
+El mensaje utilizado actualmente debe comunicar que el usuario descubrió la demo y desea conocer cómo podría aplicarse a su negocio.
+
+El número de WhatsApp debe mantenerse centralizado en `script.js`.
 
 ---
 
 # Responsive
 
-El demo debe funcionar en:
+El sitio debe funcionar correctamente en:
 
 - Desktop
 - Laptop
 - Tablet
 - Smartphone
 
-En dispositivos táctiles se soporta:
+El visor debe adaptarse al ancho disponible manteniendo una experiencia panorámica adecuada.
 
-- Arrastre horizontal/vertical
-- Pinch-to-zoom
-- Flechas de navegación
+Los controles deben permanecer accesibles en pantallas táctiles.
 
 ---
 
-# Publicación
+# Deployment
 
-Los demos son proyectos estáticos y **no requieren PHP, base de datos ni WordPress**.
+Este proyecto es una aplicación estática.
 
-Pueden publicarse directamente en:
+No requiere:
 
-- GitHub Pages
-- Hostinger
-- Netlify
-- Vercel
-- Cualquier servidor web estático
+- PHP;
+- base de datos;
+- WordPress;
+- Node.js;
+- backend;
+- servidor especial.
 
-## GitHub Pages
+Puede alojarse directamente mediante:
 
-Para demos públicos y de presentación se recomienda GitHub Pages.
+### GitHub Pages
 
-La estructura del repositorio puede ser:
-
-```text
-viewmetricamx_demo_360_restaurant
-│
-├── index.html
-├── style.css
-├── script.js
-└── assets/
-```
-
-Después de subir los archivos se puede activar GitHub Pages desde la configuración del repositorio.
-
----
-
-# Hostinger
-
-También pueden alojarse directamente en Hostinger.
-
-Subir:
+Recomendado para demos individuales.
 
 ```text
-index.html
-style.css
-script.js
-assets/
+GitHub Repository
+        ↓
+GitHub Pages
+        ↓
+Demo pública
 ```
 
-dentro de la carpeta pública correspondiente al dominio o subdominio.
+### Hostinger
 
-Ejemplo:
+También puede subirse directamente al servidor mediante:
 
 ```text
 public_html/
-│
-├── index.html
-├── style.css
-├── script.js
-└── assets/
+    index.html
+    style.css
+    script.js
+    assets/
 ```
 
-No es necesario instalar WordPress.
+Para las demos independientes, GitHub Pages resulta especialmente práctico porque permite mantener cada experiencia como un proyecto separado.
 
 ---
 
-# Arquitectura ViewMetricaMX
+# Demos previstas
 
-Todos los demos deben conservar una arquitectura visual común:
+Actualmente la arquitectura contempla demos independientes:
 
 ```text
-VISOR
-↓
-MARCA / LOGO
-↓
-INTRODUCCIÓN
-↓
-BLOQUES DE INFORMACIÓN
-↓
-BENEFICIOS
-↓
-APLICACIONES
-↓
-CTA
-↓
-CONTACTO
+viewmetricamx_demo_360_patrimonio_cultural
+viewmetricamx_demo_360_exterior
+viewmetricamx_demo_360_Restaurant
+viewmetricamx_demo_360_salon
+viewmetricamx_demo_360_universidad
 ```
 
-La información y las imágenes cambian según el sector, pero la experiencia debe sentirse como parte del mismo producto.
+La misma estructura puede reutilizarse para futuras verticales:
+
+- hoteles;
+- hospitales;
+- clínicas;
+- restaurantes;
+- salones de eventos;
+- universidades;
+- escuelas;
+- gimnasios;
+- inmobiliarias;
+- espacios industriales;
+- museos;
+- patrimonio cultural.
 
 ---
 
-# Sectores
+# Evolución futura
 
-La colección inicial contempla:
+La arquitectura está pensada para crecer más allá de fotografías 360°.
 
-### Patrimonio cultural
+Posibles futuras implementaciones:
 
-`viewmetricamx_demo_360_patrimonio_cultural`
+- múltiples panoramas por espacio;
+- hotspots;
+- planos interactivos;
+- navegación mediante mapa;
+- Digital Twins;
+- Gaussian Splats;
+- fotogrametría;
+- información contextual;
+- métricas de interacción;
+- integración con Google Maps;
+- experiencias específicas por vertical;
+- analítica de comportamiento.
 
-Aplicaciones:
-
-- Museos
-- Centros históricos
-- Monumentos
-- Sitios culturales
-- Espacios turísticos
-
-### Exterior
-
-`viewmetricamx_demo_360_exterior`
-
-Aplicaciones:
-
-- Inmobiliaria
-- Hoteles
-- Resorts
-- Arquitectura
-- Desarrollos
-
-### Restaurant
-
-`viewmetricamx_demo_360_Restaurant`
-
-Aplicaciones:
-
-- Restaurantes
-- Parrillas
-- Cafeterías
-- Bares
-- Experiencias gastronómicas
-
-### Salón
-
-`viewmetricamx_demo_360_salon`
-
-Aplicaciones:
-
-- Salones de eventos
-- Jardines
-- Haciendas
-- Centros de convenciones
-- Bodas y eventos sociales
-
-### Universidad
-
-`viewmetricamx_demo_360_universidad`
-
-Aplicaciones:
-
-- Universidades
-- Colegios
-- Campus
-- Laboratorios
-- Instalaciones académicas
+En espacios grandes, como hospitales, universidades o instalaciones industriales, el sistema podrá incorporar un plano del inmueble como capa de navegación.
 
 ---
 
-# Objetivo comercial
+# Principio de producto
 
-Estos demos no son únicamente portafolio.
+Viewmetrica debe evitar presentarse como:
 
-Su función es demostrar de manera inmediata qué puede experimentar un cliente potencial al contratar ViewMetricaMX.
+> "una empresa que hace tours 360°."
 
-El visitante debe poder pensar:
+La posición estratégica es:
 
-> "Quiero esto para mi negocio."
+> **Viewmetrica digitaliza espacios físicos y los convierte en activos de visibilidad, experiencia e inteligencia.**
 
-Por esta razón, la experiencia visual tiene prioridad sobre explicaciones técnicas.
-
----
-
-# Principio de diseño
-
-La interfaz debe mantenerse:
-
-**Limpia · Elegante · Visual · Profesional · Inmersiva**
-
-Evitar una estética excesivamente tecnológica.
-
-ViewMetricaMX debe comunicar:
-
-**espacio + presencia + información + confianza**
-
-y no simplemente "tecnología 360°".
+El 360° es una de las tecnologías utilizadas para conseguirlo, no el producto completo.
 
 ---
 
-# Mantenimiento
+## Marca
 
-Para crear un nuevo demo:
+**ViewmetricaMX**
 
-1. Copiar un demo existente.
-2. Renombrar la carpeta.
-3. Sustituir los panoramas en `/assets/`.
-4. Actualizar la configuración de vistas en `script.js`.
-5. Actualizar textos en `index.html`.
-6. Cambiar el logo o identidad del cliente si corresponde.
-7. Revisar el CTA.
-8. Probar desktop y móvil.
-9. Publicar.
-
-La arquitectura base debe permanecer intacta para evitar que cada demo se convierta en un proyecto diferente.
-
----
-
-## ViewMetricaMX
+**Reality Intelligence**
 
 **Ingeniería de Visibilidad Local**
 
-Fotografía 360° · Recorridos Virtuales · Google Maps · Inteligencia Visual
+---
+
+© 2026 ViewmetricaMX

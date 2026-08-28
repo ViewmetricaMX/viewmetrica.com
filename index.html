@@ -4,11 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>ViewMetricaMX — Experiencias 360°</title>
+  <title>ViewmetricaMX — Ingeniería de Visibilidad Local</title>
 
   <meta
     name="description"
-    content="Experiencias 360° interactivas de ViewMetricaMX para espacios comerciales, culturales, educativos y profesionales."
+    content="ViewmetricaMX digitaliza espacios físicos y los convierte en visibilidad, experiencias 360° e inteligencia local."
+  >
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
   >
 
   <link rel="stylesheet" href="style.css">
@@ -16,297 +24,1093 @@
 
 <body>
 
-  <!-- ================================================================
-       VISOR 360°
-  ================================================================= -->
+<!-- ============================================================
+     HERO / VISOR 360°
+============================================================ -->
 
-  <main id="inicio">
+<main id="inicio">
 
-    <section class="viewer-section">
+  <section class="hero-viewer">
+
+    <div
+      id="viewer-stage"
+      class="viewer-stage"
+      tabindex="0"
+      aria-label="Experiencia 360° ViewmetricaMX"
+    >
+
+      <canvas id="pano-canvas"></canvas>
+
+      <!-- LOGO -->
+      <div class="viewer-logo">
+        <img
+          src="assets/Logo_ViewmetricaMX_glow.png"
+          alt="ViewmetricaMX"
+        >
+      </div>
+
+      <!-- TÍTULO -->
+      <div class="experience-title">
+
+        <span id="experience-title">
+          PATRIMONIO CULTURAL
+        </span>
+
+        <span
+          id="experience-counter"
+          class="experience-counter"
+        >
+          01 / 05
+        </span>
+
+      </div>
+
+      <!-- FLECHAS -->
+
+      <button
+        id="viewer-prev"
+        class="viewer-arrow viewer-arrow-left"
+        type="button"
+        aria-label="Experiencia anterior"
+      >
+        ‹
+      </button>
+
+      <button
+        id="viewer-next"
+        class="viewer-arrow viewer-arrow-right"
+        type="button"
+        aria-label="Siguiente experiencia"
+      >
+        ›
+      </button>
+
+      <!-- LOADING -->
+
+      <div id="viewer-loading" class="viewer-loading">
+
+        <div class="loading-spinner"></div>
+
+        <span id="loading-label">
+          Preparando experiencia…
+        </span>
+
+      </div>
+
+      <!-- HINT -->
 
       <div
-        id="viewer-stage"
-        class="viewer-stage"
-        tabindex="0"
-        aria-label="Visor 360° interactivo"
+        id="drag-hint"
+        class="drag-hint"
       >
+        ARRASTRA PARA EXPLORAR
+      </div>
 
-        <canvas id="pano-canvas"></canvas>
+      <!-- CONTROLES -->
 
-        <!-- LOGO -->
-        <div class="viewer-logo">
-          <img
-            src="assets/Logo_ViewmetricaMX_glow.png"
-            alt="ViewMetricaMX"
-          >
-        </div>
+      <div class="viewer-controls">
 
-        <!-- TÍTULO DE LA EXPERIENCIA -->
-        <div class="experience-title">
-          <span id="experience-title">
-            PATRIMONIO CULTURAL
-          </span>
-
-          <span class="experience-counter" id="experience-counter">
-            01 / 05
-          </span>
-        </div>
-
-        <!-- FLECHA IZQUIERDA -->
         <button
-          id="viewer-prev"
-          class="viewer-arrow viewer-arrow-left"
+          id="zoom-out"
+          class="viewer-control"
           type="button"
-          aria-label="Experiencia anterior"
+          aria-label="Alejar"
         >
-          ‹
+          −
         </button>
 
-        <!-- FLECHA DERECHA -->
         <button
-          id="viewer-next"
-          class="viewer-arrow viewer-arrow-right"
+          id="recenter"
+          class="viewer-control"
           type="button"
-          aria-label="Siguiente experiencia"
+          aria-label="Centrar"
         >
-          ›
+          ◉
         </button>
 
-        <!-- LOADING -->
-        <div id="viewer-loading" class="viewer-loading">
-          <div class="loading-spinner"></div>
-          <span id="loading-label">Preparando experiencia…</span>
-        </div>
+        <button
+          id="zoom-in"
+          class="viewer-control"
+          type="button"
+          aria-label="Acercar"
+        >
+          +
+        </button>
 
-        <!-- INDICADOR DE ARRASTRE -->
-        <div id="drag-hint" class="drag-hint">
-          <span>ARRASTRA PARA EXPLORAR</span>
-        </div>
-
-        <!-- CONTROLES -->
-        <div class="viewer-controls">
-
-          <button
-            id="zoom-out"
-            class="viewer-control"
-            type="button"
-            aria-label="Alejar"
-          >
-            −
-          </button>
-
-          <button
-            id="recenter"
-            class="viewer-control"
-            type="button"
-            aria-label="Centrar vista"
-          >
-            ◉
-          </button>
-
-          <button
-            id="zoom-in"
-            class="viewer-control"
-            type="button"
-            aria-label="Acercar"
-          >
-            +
-          </button>
-
-          <button
-            id="fullscreen-btn"
-            class="viewer-control"
-            type="button"
-            aria-label="Pantalla completa"
-          >
-            ⛶
-          </button>
-
-        </div>
-
-        <!-- BARRA DE PROGRESO DEL CAMBIO AUTOMÁTICO -->
-        <div class="autoplay-progress">
-          <div id="autoplay-progress-bar"></div>
-        </div>
+        <button
+          id="fullscreen-btn"
+          class="viewer-control"
+          type="button"
+          aria-label="Pantalla completa"
+        >
+          ⛶
+        </button>
 
       </div>
 
-    </section>
+      <!-- AUTOPLAY -->
 
+      <div class="autoplay-info">
 
-    <!-- ================================================================
-         MENÚ
-    ================================================================= -->
+        <span>
+          CAMBIO AUTOMÁTICO
+        </span>
 
-    <nav class="main-nav" aria-label="Navegación principal">
-
-      <a href="#inicio" class="nav-link is-active">
-        INICIO
-      </a>
-
-      <a href="#soluciones" class="nav-link">
-        SOLUCIONES
-      </a>
-
-      <a href="#experiencia" class="nav-link">
-        EXPERIENCIA
-      </a>
-
-      <a href="#inteligencia" class="nav-link">
-        INTELIGENCIA
-      </a>
-
-      <a href="#contacto" class="nav-link">
-        CONTACTO
-      </a>
-
-    </nav>
-
-
-    <!-- ================================================================
-         CONTENIDO
-    ================================================================= -->
-
-    <section id="soluciones" class="content-section">
-
-      <div class="section-inner">
-
-        <span class="section-number">01</span>
-
-        <h1>
-          El espacio también<br>
-          comunica.
-        </h1>
-
-        <p class="lead">
-          Transformamos espacios físicos en experiencias digitales
-          que permiten conocer, explorar y recordar un lugar antes
-          de visitarlo.
-        </p>
+        <span id="autoplay-countdown">
+          30
+        </span>
 
       </div>
 
-    </section>
+      <div class="autoplay-progress">
+        <div id="autoplay-progress-bar"></div>
+      </div>
+
+    </div>
+
+  </section>
 
 
-    <section id="experiencia" class="content-section content-dark">
+  <!-- ============================================================
+       NAVEGACIÓN
+  ============================================================ -->
 
-      <div class="section-inner">
+  <nav class="main-nav" aria-label="Navegación principal">
 
-        <span class="section-number">02</span>
+    <a href="#inicio" class="nav-link active">
+      INICIO
+    </a>
 
-        <h2>
-          Una experiencia<br>
-          que invita a entrar.
-        </h2>
+    <a href="#soluciones" class="nav-link">
+      SOLUCIONES
+    </a>
 
-        <div class="content-grid">
+    <a href="#metodo" class="nav-link">
+      MÉTODO
+    </a>
 
-          <div class="info-block">
-            <span class="info-number">01</span>
+    <a href="#servicios" class="nav-link">
+      SERVICIOS
+    </a>
 
-            <h3>Exploración</h3>
+    <a href="#productos" class="nav-link">
+      PRODUCTOS
+    </a>
 
-            <p>
-              El visitante puede recorrer el espacio de forma
-              intuitiva desde cualquier dispositivo.
-            </p>
+    <a href="#inteligencia" class="nav-link">
+      INTELIGENCIA
+    </a>
+
+    <a href="#contacto" class="nav-link">
+      CONTACTO
+    </a>
+
+  </nav>
+
+
+  <!-- ============================================================
+       INTRO / BRIDGE
+  ============================================================ -->
+
+  <section class="intro section">
+
+    <div class="wrap">
+
+      <div class="intro-grid reveal">
+
+        <div>
+
+          <div class="eyebrow">
+            EL PROBLEMA
           </div>
 
-          <div class="info-block">
-            <span class="info-number">02</span>
+          <h2>
+            La realidad ya es digital.
+            Nosotros la hacemos visible.
+          </h2>
 
-            <h3>Presencia</h3>
+        </div>
 
-            <p>
-              Una representación visual de alta calidad que comunica
-              el carácter real del lugar.
-            </p>
-          </div>
+        <div class="intro-copy">
 
-          <div class="info-block">
-            <span class="info-number">03</span>
+          <p>
+            Los clientes buscan negocios en Google.
+            Exploran fotografías. Consultan ubicaciones.
+            Comparan espacios. Evalúan antes de visitar.
+          </p>
 
-            <h3>Conversión</h3>
-
-            <p>
-              Una experiencia diseñada para generar interés y
-              facilitar el siguiente paso.
-            </p>
-          </div>
+          <p>
+            Sin embargo, muchos negocios siguen teniendo
+            una representación digital pobre de su espacio
+            físico. Viewmetrica resuelve esa desconexión.
+          </p>
 
         </div>
 
       </div>
 
-    </section>
+      <div class="chain reveal">
 
+        <span>REALIDAD FÍSICA</span>
+        <span class="arrow">→</span>
 
-    <section id="inteligencia" class="content-section">
+        <span>CAPTURA</span>
+        <span class="arrow">→</span>
 
-      <div class="section-inner">
+        <span>DIGITALIZACIÓN</span>
+        <span class="arrow">→</span>
 
-        <span class="section-number">03</span>
+        <span class="hot">VISIBILIDAD</span>
+        <span class="arrow">→</span>
 
-        <h2>
-          Visibilidad que<br>
-          puede medirse.
-        </h2>
+        <span class="hot">EXPERIENCIA</span>
+        <span class="arrow">→</span>
 
-        <p class="lead">
-          Las experiencias visuales forman parte de una estrategia
-          digital más amplia: presencia, descubrimiento, interacción
-          y datos.
-        </p>
+        <span class="hot">DATOS</span>
 
       </div>
 
-    </section>
+    </div>
+
+  </section>
 
 
-    <!-- ================================================================
-         CTA
-    ================================================================= -->
+  <!-- ============================================================
+       SOLUCIONES
+  ============================================================ -->
 
-    <section id="contacto" class="cta-section">
+  <section
+    class="section"
+    id="soluciones"
+  >
 
-      <div class="cta-inner">
+    <div class="wrap">
 
-        <span class="section-number">04</span>
+      <div class="section-head reveal">
+
+        <div class="eyebrow">
+          QUÉ HACE VIEWMETRICA
+        </div>
 
         <h2>
-          ¿Quieres mostrar<br>
-          tu espacio así?
+          Tres capas, un mismo espacio.
         </h2>
 
         <p>
-          Conversemos sobre una experiencia 360° para tu negocio.
+          Visibilidad, experiencia e inteligencia funcionan
+          como un solo sistema — no como servicios independientes.
         </p>
 
+      </div>
+
+      <div class="pillars reveal">
+
+        <article class="pillar">
+
+          <div class="num">
+            01
+          </div>
+
+          <h3>
+            Visibilidad
+          </h3>
+
+          <p>
+            Ayudamos a que el negocio sea encontrado y
+            entendido correctamente en su entorno digital.
+          </p>
+
+          <ul>
+            <li>Google Maps</li>
+            <li>Google Business Profile</li>
+            <li>SEO local</li>
+            <li>Contenido georreferenciado</li>
+          </ul>
+
+        </article>
+
+
+        <article class="pillar">
+
+          <div class="num">
+            02
+          </div>
+
+          <h3>
+            Experiencia
+          </h3>
+
+          <p>
+            Convertimos espacios físicos en experiencias
+            digitales que pueden explorarse.
+          </p>
+
+          <ul>
+            <li>Fotografía 360°</li>
+            <li>Recorridos virtuales</li>
+            <li>Experiencias inmersivas</li>
+            <li>Landing pages</li>
+          </ul>
+
+        </article>
+
+
+        <article class="pillar">
+
+          <div class="num">
+            03
+          </div>
+
+          <h3>
+            Inteligencia
+          </h3>
+
+          <p>
+            Transformamos información espacial y digital
+            en conocimiento accionable.
+          </p>
+
+          <ul>
+            <li>Análisis geoespacial</li>
+            <li>Inteligencia comercial</li>
+            <li>Métricas de comportamiento</li>
+            <li>Oportunidades de mercado</li>
+          </ul>
+
+        </article>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ============================================================
+       MÉTODO
+  ============================================================ -->
+
+  <section
+    class="section section-dark"
+    id="metodo"
+  >
+
+    <div class="wrap">
+
+      <div class="section-head reveal">
+
+        <div class="eyebrow">
+          EL MÉTODO VIEWMETRICA
+        </div>
+
+        <h2>
+          Un sistema, no una lista de servicios.
+        </h2>
+
+      </div>
+
+      <div class="method-list reveal">
+
+        <article class="method-item">
+
+          <div class="num">
+            01 / OBSERVAMOS
+          </div>
+
+          <h3>
+            Diagnóstico
+          </h3>
+
+          <p>
+            Analizamos el espacio, el negocio y su contexto geográfico.
+          </p>
+
+        </article>
+
+
+        <article class="method-item">
+
+          <div class="num">
+            02 / CAPTURAMOS
+          </div>
+
+          <h3>
+            Digitalización
+          </h3>
+
+          <p>
+            Digitalizamos el espacio mediante fotografía,
+            360° y contenido visual.
+          </p>
+
+        </article>
+
+
+        <article class="method-item">
+
+          <div class="num">
+            03 / CONECTAMOS
+          </div>
+
+          <h3>
+            Integración
+          </h3>
+
+          <p>
+            Integramos el espacio con mapas, plataformas
+            y canales digitales.
+          </p>
+
+        </article>
+
+
+        <article class="method-item">
+
+          <div class="num">
+            04 / MEDIMOS
+          </div>
+
+          <h3>
+            Analítica
+          </h3>
+
+          <p>
+            Analizamos visibilidad, interacción y comportamiento.
+          </p>
+
+        </article>
+
+
+        <article class="method-item">
+
+          <div class="num">
+            05 / OPTIMIZAMOS
+          </div>
+
+          <h3>
+            Iteración
+          </h3>
+
+          <p>
+            Convertimos los datos en decisiones y oportunidades.
+          </p>
+
+        </article>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ============================================================
+       SERVICIOS
+  ============================================================ -->
+
+  <section
+    class="section"
+    id="servicios"
+  >
+
+    <div class="wrap">
+
+      <div class="section-head reveal">
+
+        <div class="eyebrow">
+          SERVICIOS
+        </div>
+
+        <h2>
+          Un ecosistema, no un catálogo.
+        </h2>
+
+      </div>
+
+
+      <div class="services reveal">
+
+        <div class="service-row">
+
+          <div>
+            <h3>Presencia Digital</h3>
+            <span class="coord">[ CAPA 01 ]</span>
+          </div>
+
+          <div class="service-tags">
+            <span>Google Business Profile</span>
+            <span>Google Maps</span>
+            <span>SEO local</span>
+            <span>Contenido visual</span>
+          </div>
+
+        </div>
+
+
+        <div class="service-row">
+
+          <div>
+            <h3>Experiencias 360°</h3>
+            <span class="coord">[ CAPA 02 ]</span>
+          </div>
+
+          <div class="service-tags">
+            <span>Fotografía 360°</span>
+            <span>Recorridos virtuales</span>
+            <span>Experiencias inmersivas</span>
+          </div>
+
+        </div>
+
+
+        <div class="service-row">
+
+          <div>
+            <h3>Inteligencia Geoespacial</h3>
+            <span class="coord">[ CAPA 03 ]</span>
+          </div>
+
+          <div class="service-tags">
+            <span>Análisis comercial</span>
+            <span>Competencia</span>
+            <span>Ubicación</span>
+            <span>Oportunidades</span>
+          </div>
+
+        </div>
+
+
+        <div class="service-row">
+
+          <div>
+            <h3>Digital Experience</h3>
+            <span class="coord">[ CAPA 04 ]</span>
+          </div>
+
+          <div class="service-tags">
+            <span>Landing pages</span>
+            <span>Visualización espacial</span>
+            <span>Integración de mapas</span>
+          </div>
+
+        </div>
+
+
+        <div class="service-row">
+
+          <div>
+            <h3>Analítica</h3>
+            <span class="coord">[ CAPA 05 ]</span>
+          </div>
+
+          <div class="service-tags">
+            <span>Métricas de visibilidad</span>
+            <span>Interacciones</span>
+            <span>Reportes</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ============================================================
+       PRODUCTOS
+  ============================================================ -->
+
+  <section
+    class="section section-dark"
+    id="productos"
+  >
+
+    <div class="wrap">
+
+      <div class="section-head reveal">
+
+        <div class="eyebrow">
+          PRODUCTOS
+        </div>
+
+        <h2>
+          Tres niveles de transformación digital.
+        </h2>
+
+      </div>
+
+
+      <div class="products reveal">
+
+        <article class="product">
+
+          <div class="tier">
+            IMPULSO
+          </div>
+
+          <h3>
+            Presencia Digital Esencial
+          </h3>
+
+          <p>
+            Para negocios que necesitan mejorar rápidamente
+            su presencia digital.
+          </p>
+
+          <a href="#contacto" class="product-link">
+            Solicitar información →
+          </a>
+
+        </article>
+
+
+        <article class="product featured">
+
+          <div class="tier">
+            GROWTH
+          </div>
+
+          <h3>
+            Visibilidad + Experiencia + Seguimiento
+          </h3>
+
+          <p>
+            Para negocios que quieren construir una presencia
+            digital más completa y medible.
+          </p>
+
+          <a href="#contacto" class="product-link">
+            Solicitar información →
+          </a>
+
+        </article>
+
+
+        <article class="product">
+
+          <div class="tier">
+            LEADERSHIP
+          </div>
+
+          <h3>
+            Inteligencia y transformación digital
+          </h3>
+
+          <p>
+            Para empresas que necesitan una estrategia avanzada
+            de visibilidad, experiencia e inteligencia geoespacial.
+          </p>
+
+          <a href="#contacto" class="product-link">
+            Solicitar información →
+          </a>
+
+        </article>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ============================================================
+       DEMO 360
+  ============================================================ -->
+
+  <section
+    class="section"
+    id="demo360"
+  >
+
+    <div class="wrap">
+
+      <div class="section-head reveal">
+
+        <div class="eyebrow">
+          DEMOSTRACIÓN
+        </div>
+
+        <h2>
+          Explora el espacio.
+        </h2>
+
+        <p>
+          La mejor manera de entender una experiencia es vivirla.
+        </p>
+
+      </div>
+
+
+      <div class="demo-viewer reveal">
+
+        <iframe
+          src="about:blank"
+          id="demo-frame"
+          title="Demostración 360° ViewmetricaMX"
+          loading="lazy"
+          allow="xr-spatial-tracking; gyroscope; accelerometer"
+          allowfullscreen
+        ></iframe>
+
         <a
-          id="whatsapp-cta"
-          class="cta-button"
           href="#"
-          target="_blank"
-          rel="noopener noreferrer"
+          id="fullscreenTour"
+          class="btn btn-primary"
         >
-          QUIERO UNA DEMO
+          EXPLORAR EN PANTALLA COMPLETA
         </a>
 
       </div>
 
-    </section>
+    </div>
 
-  </main>
+  </section>
 
 
-  <!-- ================================================================
-       THREE.JS
-  ================================================================= -->
+  <!-- ============================================================
+       GEOINTELLIGENCE
+  ============================================================ -->
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <section
+    class="section geo-section"
+    id="inteligencia"
+  >
 
-  <script src="script.js"></script>
+    <div class="wrap">
+
+      <div class="section-head reveal">
+
+        <div class="eyebrow">
+          GEOINTELLIGENCE
+        </div>
+
+        <h2>
+          La ubicación es un dato estratégico.
+        </h2>
+
+        <p>
+          Viewmetrica trabaja la dimensión geográfica del negocio
+          como una capa de inteligencia, no como un pin en un mapa.
+        </p>
+
+      </div>
+
+
+      <div class="equation reveal">
+
+        <span class="term">NEGOCIO</span>
+        <span class="op">+</span>
+
+        <span class="term">UBICACIÓN</span>
+        <span class="op">+</span>
+
+        <span class="term">COMPETENCIA</span>
+        <span class="op">+</span>
+
+        <span class="term">VISIBILIDAD</span>
+        <span class="op">+</span>
+
+        <span class="term">COMPORTAMIENTO</span>
+        <span class="op">=</span>
+
+        <span class="result">
+          INTELIGENCIA LOCAL
+        </span>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ============================================================
+       REALITY INTELLIGENCE
+  ============================================================ -->
+
+  <section class="section ri-section">
+
+    <div class="wrap">
+
+      <div class="eyebrow reveal">
+        REALITY INTELLIGENCE
+      </div>
+
+      <p class="ri-statement reveal">
+
+        La realidad física genera datos.
+        Nosotros los convertimos en
+        <span>visibilidad</span>,
+        <span>experiencia</span>
+        e
+        <span>inteligencia</span>.
+
+      </p>
+
+      <p class="ri-note reveal">
+
+        Construimos una capa digital sobre el mundo físico —
+        el punto donde el espacio real y el ecosistema digital
+        de un negocio dejan de estar desconectados.
+
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- ============================================================
+       DIFERENCIADOR
+  ============================================================ -->
+
+  <section
+    class="section"
+    id="diferenciador"
+  >
+
+    <div class="wrap">
+
+      <div class="section-head reveal">
+
+        <div class="eyebrow">
+          DIFERENCIADOR
+        </div>
+
+        <h2>
+          No hacemos marketing para espacios.
+          <br>
+          Digitalizamos el espacio.
+        </h2>
+
+      </div>
+
+
+      <div class="compare reveal">
+
+        <div class="compare-col no">
+
+          <h4>
+            Marketing tradicional
+          </h4>
+
+          <div class="flow">
+
+            <div>Publicidad</div>
+            <div>Campaña</div>
+            <div>Tráfico</div>
+            <div>Termina</div>
+
+          </div>
+
+        </div>
+
+
+        <div class="compare-col yes">
+
+          <h4>
+            Viewmetrica
+          </h4>
+
+          <div class="flow">
+
+            <div>Espacio físico</div>
+            <div>Digitalización</div>
+            <div>Presencia</div>
+            <div>Experiencia</div>
+            <div>Datos</div>
+            <div>Optimización</div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ============================================================
+       CTA
+  ============================================================ -->
+
+  <section
+    class="final-cta"
+    id="contacto"
+  >
+
+    <div class="wrap">
+
+      <div class="eyebrow reveal">
+        SIGUIENTE PASO
+      </div>
+
+      <h2 class="reveal">
+        Tu espacio ya existe.
+        <br>
+        Ahora hagámoslo visible.
+      </h2>
+
+      <p class="sub reveal">
+        Agenda una conversación y evaluamos cómo se puede
+        digitalizar tu espacio.
+      </p>
+
+      <div class="final-actions reveal">
+
+        <a
+          href="#"
+          id="whatsappCta"
+          class="btn btn-primary"
+        >
+          HABLAR CON VIEWMETRICA
+        </a>
+
+        <a
+          href="#soluciones"
+          class="btn btn-ghost"
+        >
+          EXPLORAR SOLUCIONES
+        </a>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+
+<footer>
+
+  <div class="wrap">
+
+    <div class="footer-top">
+
+      <div class="footer-brand">
+
+        <img
+          src="assets/Logo_ViewmetricaMX_glow.png"
+          alt="ViewmetricaMX"
+        >
+
+        <p>
+          Reality Intelligence —
+          Ingeniería de Visibilidad Local.
+          Comarca Lagunera, México.
+        </p>
+
+      </div>
+
+
+      <div class="footer-col">
+
+        <h5>
+          Sitio
+        </h5>
+
+        <a href="#soluciones">
+          Soluciones
+        </a>
+
+        <a href="#metodo">
+          Método
+        </a>
+
+        <a href="#servicios">
+          Servicios
+        </a>
+
+        <a href="#contacto">
+          Contacto
+        </a>
+
+      </div>
+
+
+      <div class="footer-col">
+
+        <h5>
+          Experiencia
+        </h5>
+
+        <a href="#demo360">
+          Demo 360°
+        </a>
+
+        <a href="#inteligencia">
+          Geointelligence
+        </a>
+
+        <a href="#productos">
+          Productos
+        </a>
+
+      </div>
+
+
+      <div class="footer-col">
+
+        <h5>
+          Contacto
+        </h5>
+
+        <a
+          href="#"
+          id="footerWhatsapp"
+        >
+          WhatsApp
+        </a>
+
+        <a
+          href="#"
+          id="footerMaps"
+        >
+          Google Maps
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+      <span>
+        © <span id="year"></span>
+        ViewmetricaMX.
+        Todos los derechos reservados.
+      </span>
+
+      <span>
+        REALITY INTELLIGENCE ·
+        INGENIERÍA DE VISIBILIDAD LOCAL
+      </span>
+
+    </div>
+
+  </div>
+
+</footer>
+
+
+<!-- ============================================================
+     THREE.JS
+============================================================ -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script src="script.js"></script>
 
 </body>
 </html>
