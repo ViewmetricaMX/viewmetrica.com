@@ -183,7 +183,7 @@ button {
 .viewer-logo img {
   display: block;
 
-  width: clamp(150px, 17vw, 230px);
+  width: clamp(150px, 17vw, 400px);
   height: auto;
 
   filter: drop-shadow(
@@ -219,7 +219,7 @@ button {
   color: var(--white);
 
   font-size: clamp(18px, 2vw, 30px);
-  font-weight: 600;
+  font-weight: 400;
 
   letter-spacing: 0.16em;
   line-height: 1.2;
