@@ -1208,3 +1208,45 @@ footer {
   }
 
 }
+
+
+/* ==========================================================================
+   REALITY PARTICLES BACKGROUND — decorative layer, isolated from 360 viewer
+   ========================================================================== */
+
+#reality-particles {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: .68;
+}
+
+body {
+  position: relative;
+  isolation: isolate;
+  background: #05080f;
+}
+
+main#inicio {
+  position: relative;
+  z-index: 1;
+}
+
+/* Keep the existing 360° viewer opaque and visually unchanged. */
+.viewer-section,
+.viewer-stage {
+  background: #000;
+}
+
+/* Let the particles subtly show through content sections without reducing contrast. */
+.content-dark {
+  background: rgba(8, 8, 8, .88);
+}
+
+@media (max-width: 700px), (prefers-reduced-motion: reduce) {
+  #reality-particles { opacity: .42; }
+}
