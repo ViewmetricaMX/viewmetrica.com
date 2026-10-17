@@ -30,7 +30,7 @@
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const mobile = window.matchMedia("(max-width: 700px)").matches;
-    const pointCount = mobile ? 2100 : 3600;
+    const pointCount = mobile ? 1500: 2000;
     const cyan = new THREE.Color("#00c8ff");
     const blue = new THREE.Color("#315dff");
     const ice = new THREE.Color("#9aeaff");
