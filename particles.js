@@ -117,10 +117,64 @@
       blending: THREE.AdditiveBlending,
       sizeAttenuation: true
     });
-    const rabbit = new THREE.Points(geometry, material);
+    const rabbit = new THREE.Group();
     rabbit.position.set(mobile ? 0.0 : 0.30, -0.02, 0);
-    // Rotate around the visual center of the logo-shaped rabbit, not its feet.
+    // Rotate points and connecting edges together around the rabbit's center.
     rabbit.rotation.order = "YXZ";
+    rabbit.add(new THREE.Points(geometry, material));
+
+    // Build a restrained low-poly wireframe by linking nearby original vertices.
+    // Limit links per vertex to keep the silhouette legible and avoid a solid web.
+    const maxEdgeLength = mobile ? 0.145 : 0.16;
+    const maxDegree = 5;
+    const degree = new Uint8Array(pointCount);
+    const edgePairs = [];
+    for (let i = 0; i < pointCount; i++) {
+      const ax = original[i * 3], ay = original[i * 3 + 1], az = original[i * 3 + 2];
+      const neighbors = [];
+      for (let j = i + 1; j < pointCount; j++) {
+        const dx = ax - original[j * 3];
+        const dy = ay - original[j * 3 + 1];
+        const dz = az - original[j * 3 + 2];
+        const d2 = dx * dx + dy * dy + dz * dz;
+        if (d2 < maxEdgeLength * maxEdgeLength && degree[i] < maxDegree && degree[j] < maxDegree) {
+          neighbors.push({ j, d2 });
+        }
+      }
+      neighbors.sort((a, b) => a.d2 - b.d2);
+      for (const n of neighbors.slice(0, 3)) {
+        if (degree[i] >= maxDegree || degree[n.j] >= maxDegree) continue;
+        edgePairs.push(i, n.j);
+        degree[i]++;
+        degree[n.j]++;
+      }
+    }
+    const linePositions = new Float32Array(edgePairs.length * 3);
+    const lineColors = new Float32Array(edgePairs.length * 3);
+    for (let e = 0; e < edgePairs.length; e += 2) {
+      for (let endpoint = 0; endpoint < 2; endpoint++) {
+        const vertex = edgePairs[e + endpoint];
+        const out = (e + endpoint) * 3;
+        linePositions[out] = positions[vertex * 3];
+        linePositions[out + 1] = positions[vertex * 3 + 1];
+        linePositions[out + 2] = positions[vertex * 3 + 2];
+        lineColors[out] = colors[vertex * 3] * 0.55;
+        lineColors[out + 1] = colors[vertex * 3 + 1] * 0.55;
+        lineColors[out + 2] = colors[vertex * 3 + 2] * 0.55;
+      }
+    }
+    const lineGeometry = new THREE.BufferGeometry();
+    lineGeometry.setAttribute("position", new THREE.BufferAttribute(linePositions, 3));
+    lineGeometry.setAttribute("color", new THREE.BufferAttribute(lineColors, 3));
+    const lineMaterial = new THREE.LineBasicMaterial({
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.62,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
+    });
+    const wireframe = new THREE.LineSegments(lineGeometry, lineMaterial);
+    rabbit.add(wireframe);
     scene.add(rabbit);
 
     // A quiet cloud of ambient points gives depth without competing with page content.
@@ -226,6 +280,15 @@
         positions[k + 2] += velocities[k + 2] * dt;
       }
       geometry.attributes.position.needsUpdate = true;
+      // Keep the low-poly edges attached as particles react to the cursor.
+      for (let e = 0; e < edgePairs.length; e++) {
+        const vertex = edgePairs[e];
+        const out = e * 3;
+        linePositions[out] = positions[vertex * 3];
+        linePositions[out + 1] = positions[vertex * 3 + 1];
+        linePositions[out + 2] = positions[vertex * 3 + 2];
+      }
+      lineGeometry.attributes.position.needsUpdate = true;
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
     }
