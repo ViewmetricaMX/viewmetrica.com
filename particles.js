@@ -29,7 +29,7 @@
     camera.position.set(0, 0.25, 7.2);
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const mobile = window.matchMedia("(max-width: 2000px)").matches;
+    const mobile = window.matchMedia("(max-width: 700px)").matches;
     const pointCount = mobile ? 2100 : 3600;
     const cyan = new THREE.Color("#00c8ff");
     const blue = new THREE.Color("#315dff");
