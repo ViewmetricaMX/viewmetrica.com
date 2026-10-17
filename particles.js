@@ -37,14 +37,15 @@
 
     // Sample the surfaces of ellipsoids and tapered ears to preserve a clear rabbit silhouette.
     const parts = [
-      { type: "ellipsoid", center: [0, 0.40, 0.24], radius: [0.43, 0.39, 0.34], weight: 0.20 }, // head
-      { type: "ellipsoid", center: [0, 0.22, 0.53], radius: [0.23, 0.17, 0.16], weight: 0.07 }, // muzzle
-      { type: "ear", base: [-0.22, 0.58, 0.12], tip: [-0.34, 1.42, 0.02], radius: 0.135, weight: 0.12 },
-      { type: "ear", base: [0.22, 0.58, 0.12], tip: [0.34, 1.38, 0.02], radius: 0.135, weight: 0.12 },
-      { type: "ellipsoid", center: [0, -0.22, -0.10], radius: [0.59, 0.46, 0.61], weight: 0.29 }, // torso
-      { type: "ellipsoid", center: [-0.48, -0.43, -0.27], radius: [0.27, 0.31, 0.34], weight: 0.07 },
-      { type: "ellipsoid", center: [0.48, -0.43, -0.27], radius: [0.27, 0.31, 0.34], weight: 0.07 },
-      { type: "ellipsoid", center: [0, -0.28, -0.76], radius: [0.15, 0.15, 0.15], weight: 0.06 } // tail
+      // Silhouette based on the ViewmetricaMX logo: seated rabbit in three-quarter profile, facing left.
+      { type: "ellipsoid", center: [-0.12, 0.43, 0.18], radius: [0.34, 0.36, 0.30], weight: 0.19 }, // compact head
+      { type: "ellipsoid", center: [-0.38, 0.27, 0.36], radius: [0.22, 0.13, 0.18], weight: 0.07 }, // pointed muzzle
+      { type: "ear", base: [-0.25, 0.66, 0.10], tip: [-0.42, 1.28, 0.02], radius: 0.105, weight: 0.09 },
+      { type: "ear", base: [-0.02, 0.66, 0.08], tip: [0.20, 1.20, 0.00], radius: 0.105, weight: 0.09 },
+      { type: "ellipsoid", center: [0.18, -0.12, -0.08], radius: [0.48, 0.43, 0.48], weight: 0.25 }, // rounded seated body
+      { type: "ellipsoid", center: [0.40, -0.39, 0.10], radius: [0.34, 0.23, 0.34], weight: 0.10 }, // folded hind leg
+      { type: "ellipsoid", center: [-0.08, -0.46, 0.24], radius: [0.30, 0.10, 0.20], weight: 0.08 }, // front paws
+      { type: "ellipsoid", center: [0.59, -0.12, -0.40], radius: [0.14, 0.14, 0.14], weight: 0.05 } // small tail
     ];
 
     const totalWeight = parts.reduce((sum, part) => sum + part.weight, 0);
@@ -118,6 +119,8 @@
     });
     const rabbit = new THREE.Points(geometry, material);
     rabbit.position.set(mobile ? 0.0 : 0.30, -0.02, 0);
+    // Rotate around the visual center of the logo-shaped rabbit, not its feet.
+    rabbit.rotation.order = "YXZ";
     scene.add(rabbit);
 
     // A quiet cloud of ambient points gives depth without competing with page content.
@@ -181,9 +184,10 @@
       lastFrame = now;
 
       if (!reducedMotion) {
-        rabbit.rotation.y = Math.sin(now * 0.00016) * 0.13;
-        rabbit.rotation.x = Math.sin(now * 0.00021) * 0.035;
-        dust.rotation.y += 0.00025 * dt;
+        // Slow continuous rotation makes the point-cloud rabbit visibly turn in space.
+        rabbit.rotation.y += 0.0018 * dt;
+        rabbit.rotation.x = Math.sin(now * 0.00021) * 0.045;
+        dust.rotation.y += 0.00045 * dt;
       }
 
       const influenceRadius = mobile ? 0.72 : 0.88;
