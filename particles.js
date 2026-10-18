@@ -134,17 +134,41 @@ const heatClose = new THREE.Color("#ffff00"); // Amarillo (cerca del cursor)
     const degree = new Uint8Array(pointCount);
     const edgePairs = [];
     for (let i = 0; i < pointCount; i++) {
-      const ax = original[i * 3], ay = original[i * 3 + 1], az = original[i * 3 + 2];
-      const neighbors = [];
-      for (let j = i + 1; j < pointCount; j++) {
-        const dx = ax - original[j * 3];
-        const dy = ay - original[j * 3 + 1];
-        const dz = az - original[j * 3 + 2];
-        const d2 = dx * dx + dy * dy + dz * dz;
-        if (d2 < maxEdgeLength * maxEdgeLength && degree[i] < maxDegree && degree[j] < maxDegree) {
-          neighbors.push({ j, d2 });
+        const k = i * 3;
+        const px = positions[k], py = positions[k + 1], pz = positions[k + 2];
+        const ox = original[k], oy = original[k + 1], oz = original[k + 2];
+
+        // --- CÁLCULO DE DISTANCIA PARA FÍSICAS Y COLOR ---
+        let dx = 0, dy = 0, dz = 0, dist = 9999;
+        
+        if (pointer.x > -900) { // Si el mouse está en la pantalla
+          dx = px + rabbit.position.x - mouseWorld.x;
+          dy = py + rabbit.position.y - mouseWorld.y;
+          dz = pz - mouseWorld.z;
+          dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
         }
-      }
+
+        // --- EFECTO HEAT MAP ---
+        // 1.5 es el radio de alcance del color. Redúcelo si quieres que el amarillo esté más pegado al cursor.
+        const colorFactor = Math.min(1.0, dist / 1.5); 
+        tempColor.copy(heatClose).lerp(heatFar, colorFactor);
+        
+        colors[k] = tempColor.r;
+        colors[k + 1] = tempColor.g;
+        colors[k + 2] = tempColor.b;
+
+        // Cursor pushes nearby points away; spring force restores the rabbit silhouette.
+        if (pointer.x > -900 && !reducedMotion) {
+          const distSq = dist * dist;
+          if (distSq < influenceRadius * influenceRadius && distSq > 0.00001) {
+            const push = (1 - dist / influenceRadius) * force * dt;
+            velocities[k] += (dx / dist) * push;
+            velocities[k + 1] += (dy / dist) * push;
+            velocities[k + 2] += (dz / dist) * push;
+          }
+        }
+        
+        // ... (deja el resto del código del resorte (spring), damping y positions tal cual)
       neighbors.sort((a, b) => a.d2 - b.d2);
       for (const n of neighbors.slice(0, 3)) {
         if (degree[i] >= maxDegree || degree[n.j] >= maxDegree) continue;
