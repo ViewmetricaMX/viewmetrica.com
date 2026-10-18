@@ -1418,3 +1418,50 @@ footer {
     box-shadow: 0 6px 22px rgba(0, 0, 0, 0.22);
   }
 }
+
+
+/* ==========================================================================
+   MOBILE FIX — keep the particle rabbit as a page-wide background.
+   The viewer remains opaque; all editorial sections allow the fixed canvas
+   to remain visible instead of making the rabbit look trapped in one block.
+   ========================================================================== */
+@media (max-width: 700px) {
+  html,
+  body {
+    min-height: 100%;
+    background: #040812;
+  }
+
+  #reality-particles {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+  }
+
+  main#inicio,
+  main#inicio > .section,
+  main#inicio > .intro,
+  main#inicio > footer {
+    background-color: transparent;
+  }
+
+  .content-dark,
+  .geo-section {
+    background-color: rgba(5, 8, 15, .56);
+  }
+
+  .final-cta {
+    background:
+      radial-gradient(circle at 50% 45%, rgba(0, 191, 255, .08), transparent 48%),
+      rgba(4, 8, 18, .58);
+  }
+
+  /* Deliberately preserve the solid black 360 viewer. */
+  .viewer-section,
+  .viewer-stage {
+    background: #000;
+  }
+}
