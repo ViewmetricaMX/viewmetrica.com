@@ -223,7 +223,9 @@
       camera.updateProjectionMatrix();
       rabbit.scale.setScalar(mobile ? 0.79 : Math.min(1.02, Math.max(0.78, width / 1400)));
     }
-
+const heatClose = new THREE.Color("#ffff00"); // Amarillo (cerca del cursor)
+    const heatFar = new THREE.Color("#315dff");   // Azul (lejos del cursor)
+    const tempColor = new THREE.Color();          // Variable temporal para cálculos
     function animate(now) {
       if (document.hidden) {
         requestAnimationFrame(animate);
