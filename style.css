@@ -1499,3 +1499,44 @@ footer {
     white-space: nowrap;
   }
 }
+
+
+/* HARD OVERRIDE — compact viewer title on phones and tablets.
+   Keep both vertical insets unset except bottom, so the label cannot stretch. */
+@media (max-width: 900px) {
+  #viewer-stage .experience-title {
+    position: absolute !important;
+    inset-block-start: auto !important;
+    inset-block-end: 80px !important;
+    inset-inline-start: 50% !important;
+    inset-inline-end: auto !important;
+    width: fit-content !important;
+    max-width: calc(100% - 112px) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 7px 10px !important;
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 7px !important;
+    background: rgba(0, 0, 0, .72) !important;
+    box-sizing: border-box !important;
+    white-space: normal !important;
+    line-height: 1.2 !important;
+    font-size: 11px !important;
+    letter-spacing: .06em !important;
+    transform: translateX(-50%) !important;
+  }
+
+  #viewer-stage .experience-title #experience-title {
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  #viewer-stage .experience-title .experience-counter {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+    font-size: 9px !important;
+  }
+}
