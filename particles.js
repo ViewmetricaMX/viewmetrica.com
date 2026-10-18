@@ -6,7 +6,7 @@
 (function () {
   "use strict";
 
-  function initParticleRabbit() {
+  async function initParticleRabbit() {
     const canvas = document.getElementById("reality-particles");
     if (!canvas || !window.THREE) return;
 
@@ -38,66 +38,66 @@
     const heatCyan = new THREE.Color("#16e6ff");
     const baseColors = new Float32Array(pointCount * 3);
 
-    // Sample the surfaces of ellipsoids and tapered ears to preserve a clear rabbit silhouette.
-    const parts = [
-      // Silhouette based on the ViewmetricaMX logo: seated rabbit in three-quarter profile, facing left.
-      { type: "ellipsoid", center: [-0.12, 0.43, 0.18], radius: [0.34, 0.36, 0.30], weight: 0.19 }, // compact head
-      { type: "ellipsoid", center: [-0.38, 0.27, 0.36], radius: [0.22, 0.13, 0.18], weight: 0.07 }, // pointed muzzle
-      { type: "ear", base: [-0.25, 0.66, 0.10], tip: [-0.42, 1.28, 0.02], radius: 0.105, weight: 0.09 },
-      { type: "ear", base: [-0.02, 0.66, 0.08], tip: [0.20, 1.20, 0.00], radius: 0.105, weight: 0.09 },
-      { type: "ellipsoid", center: [0.18, -0.12, -0.08], radius: [0.48, 0.43, 0.48], weight: 0.25 }, // rounded seated body
-      { type: "ellipsoid", center: [0.40, -0.39, 0.10], radius: [0.34, 0.23, 0.34], weight: 0.10 }, // folded hind leg
-      { type: "ellipsoid", center: [-0.08, -0.46, 0.24], radius: [0.30, 0.10, 0.20], weight: 0.08 }, // front paws
-      { type: "ellipsoid", center: [0.59, -0.12, -0.40], radius: [0.14, 0.14, 0.14], weight: 0.05 } // small tail
-    ];
-
-    const totalWeight = parts.reduce((sum, part) => sum + part.weight, 0);
-    function sampleRabbitPoint() {
-      let pick = Math.random() * totalWeight;
-      let part = parts[0];
-      for (const candidate of parts) {
-        pick -= candidate.weight;
-        if (pick <= 0) { part = candidate; break; }
+    // Load the exact brand SVG and sample its filled silhouette into points.
+    // This keeps the logo geometry faithful instead of approximating it with ellipsoids.
+    async function sampleLogoPoints(count) {
+      const response = await fetch("bunny-logo.svg", { cache: "force-cache" });
+      if (!response.ok) throw new Error("Could not load bunny-logo.svg");
+      const svgBlob = await response.blob();
+      const objectUrl = URL.createObjectURL(svgBlob);
+      try {
+        const image = new Image();
+        image.src = objectUrl;
+        await new Promise((resolve, reject) => {
+          image.onload = resolve;
+          image.onerror = reject;
+        });
+        const raster = document.createElement("canvas");
+        raster.width = 414;
+        raster.height = 517;
+        const ctx = raster.getContext("2d", { willReadFrequently: true });
+        ctx.clearRect(0, 0, raster.width, raster.height);
+        ctx.drawImage(image, 0, 0, raster.width, raster.height);
+        const pixels = ctx.getImageData(0, 0, raster.width, raster.height).data;
+        const opaque = [];
+        for (let y = 0; y < raster.height; y++) {
+          for (let x = 0; x < raster.width; x++) {
+            const alpha = pixels[(y * raster.width + x) * 4 + 3];
+            if (alpha > 96) opaque.push([x, y]);
+          }
+        }
+        if (!opaque.length) throw new Error("SVG silhouette is empty");
+        const result = new Float32Array(count * 3);
+        // Preserve the SVG's 206.54 × 258.28 aspect ratio.
+        const logoHeight = 2.18;
+        const logoWidth = logoHeight * (206.54 / 258.28);
+        for (let i = 0; i < count; i++) {
+          const pixel = opaque[Math.floor(Math.random() * opaque.length)];
+          const k = i * 3;
+          result[k] = (pixel[0] / raster.width - 0.5) * logoWidth;
+          result[k + 1] = (0.5 - pixel[1] / raster.height) * logoHeight;
+          // A very shallow depth gives the flat brand mark a subtle point-cloud volume.
+          result[k + 2] = (Math.random() - 0.5) * 0.075;
+        }
+        return result;
+      } finally {
+        URL.revokeObjectURL(objectUrl);
       }
-
-      let x, y, z;
-      if (part.type === "ellipsoid") {
-        const u = Math.random() * Math.PI * 2;
-        const v = Math.acos(2 * Math.random() - 1);
-        // Surface sampling keeps the silhouette readable rather than filling it in.
-        const facet = 0.965 + Math.random() * 0.07;
-        x = part.center[0] + Math.sin(v) * Math.cos(u) * part.radius[0] * facet;
-        y = part.center[1] + Math.cos(v) * part.radius[1] * facet;
-        z = part.center[2] + Math.sin(v) * Math.sin(u) * part.radius[2] * facet;
-      } else {
-        const t = Math.random();
-        const angle = Math.random() * Math.PI * 2;
-        const r = part.radius * (0.16 + Math.sqrt(Math.random()) * (1 - t * 0.62));
-        const dx = part.tip[0] - part.base[0];
-        const dy = part.tip[1] - part.base[1];
-        const len = Math.hypot(dx, dy) || 1;
-        const nx = -dy / len;
-        const ny = dx / len;
-        x = part.base[0] + dx * t + nx * Math.cos(angle) * r;
-        y = part.base[1] + dy * t + ny * Math.cos(angle) * r;
-        z = part.base[2] + (part.tip[2] - part.base[2]) * t + Math.sin(angle) * r * 0.45;
-      }
-
-      // Quantization subtly suggests the Stanford-bunny low-poly / point-cloud aesthetic.
-      const snap = 0.018;
-      return [
-        Math.round(x / snap) * snap,
-        Math.round(y / snap) * snap,
-        Math.round(z / snap) * snap
-      ];
     }
 
-    const original = new Float32Array(pointCount * 3);
+    let original;
+    try {
+      original = await sampleLogoPoints(pointCount);
+    } catch (error) {
+      console.error("[ViewmetricaMX particles] Logo SVG could not be sampled:", error);
+      canvas.style.display = "none";
+      return;
+    }
     const positions = new Float32Array(pointCount * 3);
     const velocities = new Float32Array(pointCount * 3);
     const colors = new Float32Array(pointCount * 3);
     for (let i = 0; i < pointCount; i++) {
-      const p = sampleRabbitPoint();
+      const p = [original[i * 3], original[i * 3 + 1], original[i * 3 + 2]];
       original.set(p, i * 3);
       positions.set(p, i * 3);
       const height = THREE.MathUtils.clamp((p[1] + 0.55) / 2.0, 0, 1);
@@ -248,8 +248,9 @@
 
       if (!reducedMotion) {
         // Slow continuous rotation makes the point-cloud rabbit visibly turn in space.
-        rabbit.rotation.y += 0.0018 * dt;
-        rabbit.rotation.x = Math.sin(now * 0.00021) * 0.045;
+        // Keep the logo nearly front-facing so its exact silhouette remains recognizable.
+        rabbit.rotation.y += 0.00018 * dt;
+        rabbit.rotation.x = Math.sin(now * 0.00021) * 0.008;
         dust.rotation.y += 0.00045 * dt;
       }
 
