@@ -34,6 +34,9 @@
     const cyan = new THREE.Color("#00c8ff");
     const blue = new THREE.Color("#315dff");
     const ice = new THREE.Color("#9aeaff");
+    const heatYellow = new THREE.Color("#ffe600");
+    const heatCyan = new THREE.Color("#16e6ff");
+    const baseColors = new Float32Array(pointCount * 3);
 
     // Sample the surfaces of ellipsoids and tapered ears to preserve a clear rabbit silhouette.
     const parts = [
@@ -102,6 +105,9 @@
       colors[i * 3] = color.r;
       colors[i * 3 + 1] = color.g;
       colors[i * 3 + 2] = color.b;
+      baseColors[i * 3] = color.r;
+      baseColors[i * 3 + 1] = color.g;
+      baseColors[i * 3 + 2] = color.b;
     }
 
     const geometry = new THREE.BufferGeometry();
@@ -213,6 +219,9 @@
       raycaster.ray.intersectPlane(mousePlane, mouseWorld);
     }
     window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("pointerleave", function () {
+      pointer.set(-9999, -9999);
+    }, { passive: true });
 
     function resize() {
       const width = window.innerWidth;
@@ -245,11 +254,36 @@
       }
 
       const influenceRadius = mobile ? 0.72 : 0.88;
+      const heatRadius = mobile ? 1.05 : 1.28;
       const force = mobile ? 0.045 : 0.052;
       for (let i = 0; i < pointCount; i++) {
         const k = i * 3;
         const px = positions[k], py = positions[k + 1], pz = positions[k + 2];
         const ox = original[k], oy = original[k + 1], oz = original[k + 2];
+
+        // Heatmap: particles nearest the cursor glow yellow; the color grades
+        // through cyan before returning to the original blue farther away.
+        let heat = 0;
+        if (pointer.x > -900) {
+          const hx = px + rabbit.position.x - mouseWorld.x;
+          const hy = py + rabbit.position.y - mouseWorld.y;
+          const hz = pz - mouseWorld.z;
+          const heatDist = Math.sqrt(hx * hx + hy * hy + hz * hz);
+          if (heatDist < heatRadius) {
+            const falloff = 1 - heatDist / heatRadius;
+            heat = falloff * falloff * (3 - 2 * falloff);
+          }
+        }
+        const baseR = baseColors[k], baseG = baseColors[k + 1], baseB = baseColors[k + 2];
+        // Yellow at the cursor, cyan at the edge of the influence, blue outside it.
+        const mid = Math.max(0, Math.min(1, heat * 1.8));
+        const yellowMix = Math.max(0, Math.min(1, (heat - 0.42) / 0.58));
+        const targetR = baseR + (heatCyan.r - baseR) * mid;
+        const targetG = baseG + (heatCyan.g - baseG) * mid;
+        const targetB = baseB + (heatCyan.b - baseB) * mid;
+        colors[k] = targetR + (heatYellow.r - targetR) * yellowMix;
+        colors[k + 1] = targetG + (heatYellow.g - targetG) * yellowMix;
+        colors[k + 2] = targetB + (heatYellow.b - targetB) * yellowMix;
 
         // Cursor pushes nearby points away; spring force restores the rabbit silhouette.
         if (pointer.x > -900 && !reducedMotion) {
@@ -280,15 +314,20 @@
         positions[k + 2] += velocities[k + 2] * dt;
       }
       geometry.attributes.position.needsUpdate = true;
-      // Keep the low-poly edges attached as particles react to the cursor.
+      geometry.attributes.color.needsUpdate = true;
+      // Keep the low-poly edges attached as particles react to the cursor and update their heatmap colors.
       for (let e = 0; e < edgePairs.length; e++) {
         const vertex = edgePairs[e];
         const out = e * 3;
         linePositions[out] = positions[vertex * 3];
         linePositions[out + 1] = positions[vertex * 3 + 1];
         linePositions[out + 2] = positions[vertex * 3 + 2];
+        lineColors[out] = colors[vertex * 3] * 0.55;
+        lineColors[out + 1] = colors[vertex * 3 + 1] * 0.55;
+        lineColors[out + 2] = colors[vertex * 3 + 2] * 0.55;
       }
       lineGeometry.attributes.position.needsUpdate = true;
+      lineGeometry.attributes.color.needsUpdate = true;
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
     }
