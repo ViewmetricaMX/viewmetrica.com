@@ -278,7 +278,7 @@ const heatClose = new THREE.Color("#ffff00"); // Amarillo (cerca del cursor)
         const k = i * 3;
         const px = positions[k], py = positions[k + 1], pz = positions[k + 2];
         const ox = original[k], oy = original[k + 1], oz = original[k + 2];
-
+}
         // Cursor pushes nearby points away; spring force restores the rabbit silhouette.
         if (pointer.x > -900 && !reducedMotion) {
           const dx = px + rabbit.position.x - mouseWorld.x;
