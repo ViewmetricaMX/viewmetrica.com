@@ -35,7 +35,8 @@
     const blue = new THREE.Color("#315dff");
     const ice = new THREE.Color("#9aeaff");
     const heatYellow = new THREE.Color("#ffe600");
-    const heatCyan = new THREE.Color("#16e6ff");
+    const heatMagenta = new THREE.Color("#ff00b8");
+    const heatBlue = new THREE.Color("#315dff");
     const baseColors = new Float32Array(pointCount * 3);
 
     // Load the exact brand SVG and sample its filled silhouette into points.
@@ -76,8 +77,8 @@
           const k = i * 3;
           result[k] = (pixel[0] / raster.width - 0.5) * logoWidth;
           result[k + 1] = (0.5 - pixel[1] / raster.height) * logoHeight;
-          // A very shallow depth gives the flat brand mark a subtle point-cloud volume.
-          result[k + 2] = (Math.random() - 0.5) * 0.075;
+          // Extrude the exact logo silhouette into a volumetric point cloud so it remains visible from the side during a full 3D turn.
+          result[k + 2] = (Math.random() - 0.5) * 0.52;
         }
         return result;
       } finally {
@@ -247,10 +248,9 @@
       lastFrame = now;
 
       if (!reducedMotion) {
-        // Slow continuous rotation makes the point-cloud rabbit visibly turn in space.
-        // Keep the logo nearly front-facing so its exact silhouette remains recognizable.
-        rabbit.rotation.y += 0.00018 * dt;
-        rabbit.rotation.x = Math.sin(now * 0.00021) * 0.008;
+        // One complete 360° turn every 24 seconds, with real volume so the rabbit does not vanish edge-on.
+        rabbit.rotation.y = (now / 24000) * Math.PI * 2;
+        rabbit.rotation.x = Math.sin(now * 0.00021) * 0.018;
         dust.rotation.y += 0.00045 * dt;
       }
 
@@ -262,8 +262,7 @@
         const px = positions[k], py = positions[k + 1], pz = positions[k + 2];
         const ox = original[k], oy = original[k + 1], oz = original[k + 2];
 
-        // Heatmap: particles nearest the cursor glow yellow; the color grades
-        // through cyan before returning to the original blue farther away.
+        // Heatmap gradient: warm yellow at the cursor, magenta at 50% influence, blue at the outer edge.
         let heat = 0;
         if (pointer.x > -900) {
           const hx = px + rabbit.position.x - mouseWorld.x;
@@ -276,15 +275,18 @@
           }
         }
         const baseR = baseColors[k], baseG = baseColors[k + 1], baseB = baseColors[k + 2];
-        // Yellow at the cursor, cyan at the edge of the influence, blue outside it.
-        const mid = Math.max(0, Math.min(1, heat * 1.8));
-        const yellowMix = Math.max(0, Math.min(1, (heat - 0.42) / 0.58));
-        const targetR = baseR + (heatCyan.r - baseR) * mid;
-        const targetG = baseG + (heatCyan.g - baseG) * mid;
-        const targetB = baseB + (heatCyan.b - baseB) * mid;
-        colors[k] = targetR + (heatYellow.r - targetR) * yellowMix;
-        colors[k + 1] = targetG + (heatYellow.g - targetG) * yellowMix;
-        colors[k + 2] = targetB + (heatYellow.b - targetB) * yellowMix;
+        // Piecewise interpolation guarantees magenta at 50% heat: blue → magenta → yellow.
+        if (heat >= 0.5) {
+          const t = (heat - 0.5) * 2;
+          colors[k] = heatMagenta.r + (heatYellow.r - heatMagenta.r) * t;
+          colors[k + 1] = heatMagenta.g + (heatYellow.g - heatMagenta.g) * t;
+          colors[k + 2] = heatMagenta.b + (heatYellow.b - heatMagenta.b) * t;
+        } else {
+          const t = heat * 2;
+          colors[k] = heatBlue.r + (heatMagenta.r - heatBlue.r) * t;
+          colors[k + 1] = heatBlue.g + (heatMagenta.g - heatBlue.g) * t;
+          colors[k + 2] = heatBlue.b + (heatMagenta.b - heatBlue.b) * t;
+        }
 
         // Cursor pushes nearby points away; spring force restores the rabbit silhouette.
         if (pointer.x > -900 && !reducedMotion) {
