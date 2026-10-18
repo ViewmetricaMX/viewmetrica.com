@@ -1329,3 +1329,92 @@ footer {
     opacity: .4;
   }
 }
+
+/* ==========================================================================
+   LEGIBILIDAD SOBRE EL FONDO INTERACTIVO
+   Unifica el cristal oscuro detrás de los bloques de texto para que las
+   partículas no compitan con la lectura. El visor 360° queda intacto.
+   ========================================================================== */
+:root {
+  --glass-bg: rgba(4, 9, 19, 0.82);
+  --glass-border: rgba(140, 205, 255, 0.14);
+  --glass-blur: 10px;
+}
+
+.section-head,
+.intro-grid > div,
+.chain,
+.method-item,
+.service-row,
+.ri-statement,
+.ri-note,
+.equation,
+.footer-brand,
+.footer-col {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+}
+
+/* Give each readable block consistent breathing room. */
+.section-head {
+  padding: clamp(22px, 3.2vw, 42px);
+}
+
+.intro-grid > div {
+  padding: clamp(22px, 3vw, 38px);
+}
+
+.chain {
+  padding: 24px;
+}
+
+.method-item,
+.service-row {
+  padding: 28px;
+  margin-bottom: 12px;
+}
+
+.ri-statement,
+.ri-note {
+  padding: clamp(22px, 3vw, 36px);
+}
+
+.equation {
+  margin-top: 28px;
+}
+
+/* Existing cards keep their own surfaces; increase contrast consistently. */
+.pillar,
+.experience-card,
+.product,
+.compare-col,
+.flow div {
+  border-color: var(--glass-border);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+}
+
+/* Prevent decorative particles from reducing text contrast on small screens. */
+@media (max-width: 700px) {
+  :root {
+    --glass-bg: rgba(4, 9, 19, 0.90);
+    --glass-blur: 8px;
+  }
+
+  .section-head,
+  .intro-grid > div,
+  .chain,
+  .method-item,
+  .service-row,
+  .ri-statement,
+  .ri-note,
+  .equation,
+  .footer-brand,
+  .footer-col {
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.22);
+  }
+}
