@@ -1465,3 +1465,37 @@ footer {
     background: #000;
   }
 }
+
+
+/* MOBILE VIEWER TITLE FIX — prevent absolute top+bottom stretching. */
+@media (max-width: 600px) {
+  .experience-title {
+    top: auto;
+    bottom: 80px;
+    left: 50%;
+    right: auto;
+    width: max-content;
+    max-width: calc(100% - 32px);
+    height: auto;
+    min-height: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 12px;
+    white-space: normal;
+    text-align: center;
+    font-size: clamp(9px, 2.8vw, 12px);
+    line-height: 1.25;
+    letter-spacing: .08em;
+    transform: translateX(-50%);
+  }
+
+  .experience-counter {
+    flex: 0 0 auto;
+    font-size: 9px;
+    white-space: nowrap;
+  }
+}
