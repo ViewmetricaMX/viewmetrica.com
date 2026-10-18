@@ -447,6 +447,7 @@ button {
 .intro-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
+   background: var(--line);
   gap: 100px;
   align-items: start;
 }
