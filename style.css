@@ -1540,3 +1540,59 @@ footer {
     font-size: 9px !important;
   }
 }
+
+
+/* DESKTOP + MOBILE FIX — keep the particle rabbit as a viewport-wide background.
+   Only the 360° viewer stays opaque; content sections use translucent surfaces. */
+html,
+body {
+  min-height: 100%;
+  background: #040812;
+}
+
+body {
+  position: relative;
+  isolation: isolate;
+}
+
+#reality-particles {
+  position: fixed !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+
+main#inicio {
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+}
+
+main#inicio > section:not(.viewer-section),
+main#inicio > footer,
+main#inicio > .intro {
+  background-color: rgba(4, 8, 18, .24) !important;
+}
+
+main#inicio > .content-dark,
+main#inicio > .geo-section {
+  background-color: rgba(5, 8, 15, .46) !important;
+}
+
+main#inicio > .final-cta {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(0, 191, 255, .08), transparent 48%),
+    rgba(4, 8, 18, .44) !important;
+}
+
+/* Never allow the background canvas to show through the 360 image. */
+main#inicio > .viewer-section,
+main#inicio > .viewer-section .viewer-stage {
+  position: relative;
+  z-index: 2;
+  background: #000 !important;
+}
