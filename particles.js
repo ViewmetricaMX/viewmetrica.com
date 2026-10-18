@@ -26,7 +26,7 @@
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-    camera.position.set(0, 0.25, 7.2);
+    camera.position.set(0, 0.25, 3.5);
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const mobile = window.matchMedia("(max-width: 700px)").matches;
