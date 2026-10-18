@@ -307,7 +307,9 @@ const heatClose = new THREE.Color("#ffff00"); // Amarillo (cerca del cursor)
         positions[k + 1] += velocities[k + 1] * dt;
         positions[k + 2] += velocities[k + 2] * dt;
       }
-      geometry.attributes.position.needsUpdate = true;
+    geometry.attributes.position.needsUpdate = true;
+      geometry.attributes.color.needsUpdate = true; // Agrega esta línea para los puntos
+
       // Keep the low-poly edges attached as particles react to the cursor.
       for (let e = 0; e < edgePairs.length; e++) {
         const vertex = edgePairs[e];
@@ -315,8 +317,16 @@ const heatClose = new THREE.Color("#ffff00"); // Amarillo (cerca del cursor)
         linePositions[out] = positions[vertex * 3];
         linePositions[out + 1] = positions[vertex * 3 + 1];
         linePositions[out + 2] = positions[vertex * 3 + 2];
+        
+        // Agrega estas 3 líneas para que las líneas que unen los puntos también cambien de color
+        lineColors[out] = colors[vertex * 3] * 0.55; 
+        lineColors[out + 1] = colors[vertex * 3 + 1] * 0.55;
+        lineColors[out + 2] = colors[vertex * 3 + 2] * 0.55;
       }
+      
       lineGeometry.attributes.position.needsUpdate = true;
+      lineGeometry.attributes.color.needsUpdate = true; // Agrega esta línea para las líneas
+      
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
     }
