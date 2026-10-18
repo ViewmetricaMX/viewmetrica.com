@@ -549,7 +549,18 @@ button {
   border-bottom: 1px solid var(--line);
 }
 
-
+/* Fondos translúcidos para la sección "El Problema" */
+.intro-grid > div {
+    background: rgba(10, 15, 30, 0.6); /* Fondo oscuro semitransparente */
+    backdrop-filter: blur(8px); /* Efecto de cristal que desenfoca lo que hay detrás */
+    -webkit-backdrop-filter: blur(8px); /* Soporte para Safari */
+    border: 1px solid rgba(255, 255, 255, 0.08); /* Borde blanco muy sutil */
+    border-radius: 12px; /* Esquinas redondeadas */
+    padding: 2.5rem; /* Espaciado interno para que el texto respire */
+    
+    /* Opcional: una sombra suave para darle profundidad */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
 /* ==========================================================================
    EXPERIENCE
    ========================================================================== */
