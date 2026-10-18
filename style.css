@@ -447,6 +447,7 @@ button {
 .intro-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
+   background: var(--line);
   gap: 100px;
   align-items: start;
 }
@@ -458,7 +459,7 @@ button {
 .intro-grid p {
   margin: 0 0 22px;
 
-  color: var(--gray);
+  color: var(--white);
 
   font-size: 18px;
   line-height: 1.8;
@@ -549,7 +550,18 @@ button {
   border-bottom: 1px solid var(--line);
 }
 
-
+/* Fondos translúcidos para la sección "El Problema" */
+.intro-grid > div {
+    background: rgba(10, 15, 30, 0.6); /* Fondo oscuro semitransparente */
+    backdrop-filter: blur(8px); /* Efecto de cristal que desenfoca lo que hay detrás */
+    -webkit-backdrop-filter: blur(8px); /* Soporte para Safari */
+    border: 1px solid rgba(255, 255, 255, 0.08); /* Borde blanco muy sutil */
+    border-radius: 12px; /* Esquinas redondeadas */
+    padding: 2.5rem; /* Espaciado interno para que el texto respire */
+    
+    /* Opcional: una sombra suave para darle profundidad */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
 /* ==========================================================================
    EXPERIENCE
    ========================================================================== */
@@ -1207,4 +1219,202 @@ footer {
     grid-template-columns: 1fr;
   }
 
+}
+
+
+/* ==========================================================================
+   INTERACTIVE PARTICLE SPHERE — background layer
+   The 360 viewer stays opaque and first in the document. The sphere lives
+   behind the remaining page content and never captures pointer input.
+   ========================================================================== */
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  position: relative;
+  isolation: isolate;
+  background: #040812;
+}
+
+#reality-particles {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: .76;
+}
+
+main#inicio {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+
+/* Keep the original 360 viewer at the very top and fully opaque. */
+.viewer-section,
+.viewer-stage {
+  position: relative;
+  z-index: 2;
+  background: #000;
+}
+
+/* Content stays in front; translucent surfaces let the sphere remain visible. */
+.section,
+.intro,
+footer {
+  background-color: transparent;
+}
+
+.content-dark,
+.geo-section {
+  background: rgba(5, 8, 15, .76);
+}
+
+.pillar,
+.experience-card,
+.product,
+.compare-col,
+.compare-col.yes,
+.compare-col.no,
+.flow div {
+  background-color: rgba(7, 12, 23, .72);
+  backdrop-filter: blur(2px);
+}
+
+.pillars,
+.compare {
+  background: rgba(35, 77, 115, .12);
+}
+
+.final-cta {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(0, 191, 255, .10), transparent 48%),
+    rgba(4, 8, 18, .72);
+}
+
+.main-nav {
+  position: relative;
+  z-index: 3;
+  background: rgba(4, 8, 18, .86);
+  backdrop-filter: blur(12px);
+}
+
+footer {
+  position: relative;
+  z-index: 1;
+  background: rgba(4, 8, 18, .48);
+}
+
+@media (max-width: 700px) {
+  #reality-particles {
+    opacity: .54;
+  }
+
+  .pillar,
+  .experience-card,
+  .product,
+  .compare-col,
+  .flow div {
+    background-color: rgba(7, 12, 23, .82);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #reality-particles {
+    opacity: .4;
+  }
+}
+
+/* ==========================================================================
+   LEGIBILIDAD SOBRE EL FONDO INTERACTIVO
+   Unifica el cristal oscuro detrás de los bloques de texto para que las
+   partículas no compitan con la lectura. El visor 360° queda intacto.
+   ========================================================================== */
+:root {
+  --glass-bg: rgba(4, 9, 19, 0.82);
+  --glass-border: rgba(140, 205, 255, 0.14);
+  --glass-blur: 10px;
+}
+
+.section-head,
+.intro-grid > div,
+.chain,
+.method-item,
+.service-row,
+.ri-statement,
+.ri-note,
+.equation,
+.footer-brand,
+.footer-col {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+}
+
+/* Give each readable block consistent breathing room. */
+.section-head {
+  padding: clamp(22px, 3.2vw, 42px);
+}
+
+.intro-grid > div {
+  padding: clamp(22px, 3vw, 38px);
+}
+
+.chain {
+  padding: 24px;
+}
+
+.method-item,
+.service-row {
+  padding: 28px;
+  margin-bottom: 12px;
+}
+
+.ri-statement,
+.ri-note {
+  padding: clamp(22px, 3vw, 36px);
+}
+
+.equation {
+  margin-top: 28px;
+}
+
+/* Existing cards keep their own surfaces; increase contrast consistently. */
+.pillar,
+.experience-card,
+.product,
+.compare-col,
+.flow div {
+  border-color: var(--glass-border);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+}
+
+/* Prevent decorative particles from reducing text contrast on small screens. */
+@media (max-width: 700px) {
+  :root {
+    --glass-bg: rgba(4, 9, 19, 0.90);
+    --glass-blur: 8px;
+  }
+
+  .section-head,
+  .intro-grid > div,
+  .chain,
+  .method-item,
+  .service-row,
+  .ri-statement,
+  .ri-note,
+  .equation,
+  .footer-brand,
+  .footer-col {
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.22);
+  }
 }
