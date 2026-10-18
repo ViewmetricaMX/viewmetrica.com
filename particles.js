@@ -7,11 +7,7 @@
   "use strict";
 
   function initParticleRabbit() {
-const heatClose = new THREE.Color("#ffff00"); // Amarillo (cerca del cursor)
-    const heatFar = new THREE.Color("#315dff");   // Azul (lejos del cursor)
-    const tempColor = new THREE.Color();          // Variable temporal para cálculos
-     
-     const canvas = document.getElementById("reality-particles");
+    const canvas = document.getElementById("reality-particles");
     if (!canvas || !window.THREE) return;
 
     const THREE = window.THREE;
@@ -30,11 +26,11 @@ const heatClose = new THREE.Color("#ffff00"); // Amarillo (cerca del cursor)
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-    camera.position.set(0, 0.25, 3);
+    camera.position.set(0, 0.25, 7.2);
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const mobile = window.matchMedia("(max-width: 700px)").matches;
-    const pointCount = mobile ? 1500: 2000;
+    const pointCount = mobile ? 2100 : 3600;
     const cyan = new THREE.Color("#00c8ff");
     const blue = new THREE.Color("#315dff");
     const ice = new THREE.Color("#9aeaff");
@@ -134,41 +130,17 @@ const heatClose = new THREE.Color("#ffff00"); // Amarillo (cerca del cursor)
     const degree = new Uint8Array(pointCount);
     const edgePairs = [];
     for (let i = 0; i < pointCount; i++) {
-        const k = i * 3;
-        const px = positions[k], py = positions[k + 1], pz = positions[k + 2];
-        const ox = original[k], oy = original[k + 1], oz = original[k + 2];
-
-        // --- CÁLCULO DE DISTANCIA PARA FÍSICAS Y COLOR ---
-        let dx = 0, dy = 0, dz = 0, dist = 9999;
-        
-        if (pointer.x > -900) { // Si el mouse está en la pantalla
-          dx = px + rabbit.position.x - mouseWorld.x;
-          dy = py + rabbit.position.y - mouseWorld.y;
-          dz = pz - mouseWorld.z;
-          dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+      const ax = original[i * 3], ay = original[i * 3 + 1], az = original[i * 3 + 2];
+      const neighbors = [];
+      for (let j = i + 1; j < pointCount; j++) {
+        const dx = ax - original[j * 3];
+        const dy = ay - original[j * 3 + 1];
+        const dz = az - original[j * 3 + 2];
+        const d2 = dx * dx + dy * dy + dz * dz;
+        if (d2 < maxEdgeLength * maxEdgeLength && degree[i] < maxDegree && degree[j] < maxDegree) {
+          neighbors.push({ j, d2 });
         }
-
-        // --- EFECTO HEAT MAP ---
-        // 1.5 es el radio de alcance del color. Redúcelo si quieres que el amarillo esté más pegado al cursor.
-        const colorFactor = Math.min(1.0, dist / 1.5); 
-        tempColor.copy(heatClose).lerp(heatFar, colorFactor);
-        
-        colors[k] = tempColor.r;
-        colors[k + 1] = tempColor.g;
-        colors[k + 2] = tempColor.b;
-
-        // Cursor pushes nearby points away; spring force restores the rabbit silhouette.
-        if (pointer.x > -900 && !reducedMotion) {
-          const distSq = dist * dist;
-          if (distSq < influenceRadius * influenceRadius && distSq > 0.00001) {
-            const push = (1 - dist / influenceRadius) * force * dt;
-            velocities[k] += (dx / dist) * push;
-            velocities[k + 1] += (dy / dist) * push;
-            velocities[k + 2] += (dz / dist) * push;
-          }
-        }
-        
-        // ... (deja el resto del código del resorte (spring), damping y positions tal cual)
+      }
       neighbors.sort((a, b) => a.d2 - b.d2);
       for (const n of neighbors.slice(0, 3)) {
         if (degree[i] >= maxDegree || degree[n.j] >= maxDegree) continue;
@@ -278,7 +250,7 @@ const heatClose = new THREE.Color("#ffff00"); // Amarillo (cerca del cursor)
         const k = i * 3;
         const px = positions[k], py = positions[k + 1], pz = positions[k + 2];
         const ox = original[k], oy = original[k + 1], oz = original[k + 2];
-}
+
         // Cursor pushes nearby points away; spring force restores the rabbit silhouette.
         if (pointer.x > -900 && !reducedMotion) {
           const dx = px + rabbit.position.x - mouseWorld.x;
@@ -307,9 +279,7 @@ const heatClose = new THREE.Color("#ffff00"); // Amarillo (cerca del cursor)
         positions[k + 1] += velocities[k + 1] * dt;
         positions[k + 2] += velocities[k + 2] * dt;
       }
-    geometry.attributes.position.needsUpdate = true;
-      geometry.attributes.color.needsUpdate = true; // Agrega esta línea para los puntos
-
+      geometry.attributes.position.needsUpdate = true;
       // Keep the low-poly edges attached as particles react to the cursor.
       for (let e = 0; e < edgePairs.length; e++) {
         const vertex = edgePairs[e];
@@ -317,16 +287,8 @@ const heatClose = new THREE.Color("#ffff00"); // Amarillo (cerca del cursor)
         linePositions[out] = positions[vertex * 3];
         linePositions[out + 1] = positions[vertex * 3 + 1];
         linePositions[out + 2] = positions[vertex * 3 + 2];
-        
-        // Agrega estas 3 líneas para que las líneas que unen los puntos también cambien de color
-        lineColors[out] = colors[vertex * 3] * 0.55; 
-        lineColors[out + 1] = colors[vertex * 3 + 1] * 0.55;
-        lineColors[out + 2] = colors[vertex * 3 + 2] * 0.55;
       }
-      
       lineGeometry.attributes.position.needsUpdate = true;
-      lineGeometry.attributes.color.needsUpdate = true; // Agrega esta línea para las líneas
-      
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
     }
