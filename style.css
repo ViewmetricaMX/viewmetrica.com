@@ -118,7 +118,7 @@ button {
   transform: translateX(-50%);
   z-index: 20;
 
-  display: flex;
+  display: absolute;
   align-items: center;
   gap: 18px;
 
