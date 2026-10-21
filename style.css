@@ -118,11 +118,11 @@ button {
   transform: translateX(-50%);
   z-index: 20;
 
-  display: absolute;
+  display: flex;
   align-items: center;
   gap: 18px;
 
-  padding: 12px 20px;
+  padding: 12px 12px;
 
   color: #fff;
   background: rgba(0,0,0,.58);
