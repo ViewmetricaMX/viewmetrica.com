@@ -1418,3 +1418,306 @@ footer {
     box-shadow: 0 6px 22px rgba(0, 0, 0, 0.22);
   }
 }
+
+
+/* ==========================================================================
+   MOBILE FIX — keep the particle rabbit as a page-wide background.
+   The viewer remains opaque; all editorial sections allow the fixed canvas
+   to remain visible instead of making the rabbit look trapped in one block.
+   ========================================================================== */
+@media (max-width: 700px) {
+  html,
+  body {
+    min-height: 100%;
+    background: #040812;
+  }
+
+  #reality-particles {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+  }
+
+  main#inicio,
+  main#inicio > .section,
+  main#inicio > .intro,
+  main#inicio > footer {
+    background-color: transparent;
+  }
+
+  .content-dark,
+  .geo-section {
+    background-color: rgba(5, 8, 15, .56);
+  }
+
+  .final-cta {
+    background:
+      radial-gradient(circle at 50% 45%, rgba(0, 191, 255, .08), transparent 48%),
+      rgba(4, 8, 18, .58);
+  }
+
+  /* Deliberately preserve the solid black 360 viewer. */
+  .viewer-section,
+  .viewer-stage {
+    background: #000;
+  }
+}
+
+
+/* MOBILE VIEWER TITLE FIX — prevent absolute top+bottom stretching. */
+@media (max-width: 600px) {
+  .experience-title {
+    top: auto;
+    bottom: 80px;
+    left: 50%;
+    right: auto;
+    width: max-content;
+    max-width: calc(100% - 32px);
+    height: auto;
+    min-height: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 12px;
+    white-space: normal;
+    text-align: center;
+    font-size: clamp(9px, 2.8vw, 12px);
+    line-height: 1.25;
+    letter-spacing: .08em;
+    transform: translateX(-50%);
+  }
+
+  .experience-counter {
+    flex: 0 0 auto;
+    font-size: 9px;
+    white-space: nowrap;
+  }
+}
+
+
+/* HARD OVERRIDE — compact viewer title on phones and tablets.
+   Keep both vertical insets unset except bottom, so the label cannot stretch. */
+@media (max-width: 900px) {
+  #viewer-stage .experience-title {
+    position: absolute !important;
+    inset-block-start: auto !important;
+    inset-block-end: 80px !important;
+    inset-inline-start: 50% !important;
+    inset-inline-end: auto !important;
+    width: fit-content !important;
+    max-width: calc(100% - 112px) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 7px 10px !important;
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 7px !important;
+    background: rgba(0, 0, 0, .72) !important;
+    box-sizing: border-box !important;
+    white-space: normal !important;
+    line-height: 1.2 !important;
+    font-size: 11px !important;
+    letter-spacing: .06em !important;
+    transform: translateX(-50%) !important;
+  }
+
+  #viewer-stage .experience-title #experience-title {
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  #viewer-stage .experience-title .experience-counter {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+    font-size: 9px !important;
+  }
+}
+
+
+/* DESKTOP + MOBILE FIX — keep the particle rabbit as a viewport-wide background.
+   Only the 360° viewer stays opaque; content sections use translucent surfaces. */
+html,
+body {
+  min-height: 100%;
+  background: #040812;
+}
+
+body {
+  position: relative;
+  isolation: isolate;
+}
+
+#reality-particles {
+  position: fixed !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+
+main#inicio {
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+}
+
+main#inicio > section:not(.viewer-section),
+main#inicio > footer,
+main#inicio > .intro {
+  background-color: rgba(4, 8, 18, .24) !important;
+}
+
+main#inicio > .content-dark,
+main#inicio > .geo-section {
+  background-color: rgba(5, 8, 15, .46) !important;
+}
+
+main#inicio > .final-cta {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(0, 191, 255, .08), transparent 48%),
+    rgba(4, 8, 18, .44) !important;
+}
+
+/* Never allow the background canvas to show through the 360 image. */
+main#inicio > .viewer-section,
+main#inicio > .viewer-section .viewer-stage {
+  position: relative;
+  z-index: 2;
+  background: #000 !important;
+}
+
+
+/* FINAL PHONE FIX: title must size to its text, never to the viewer stage. */
+@media screen and (max-width: 600px) {
+  #viewer-stage > .experience-title,
+  #viewer-stage .experience-title {
+    inset: 10px auto auto 50% !important;
+    top: 10px !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: 50% !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: calc(100% - 24px) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 6px 9px !important;
+    display: inline-flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    box-sizing: border-box !important;
+    border-radius: 4px !important;
+    background: rgba(0, 0, 0, .68) !important;
+    backdrop-filter: blur(4px) !important;
+    font-size: 10px !important;
+    line-height: 1.15 !important;
+    letter-spacing: .045em !important;
+    white-space: nowrap !important;
+    transform: translateX(-50%) !important;
+  }
+
+  #viewer-stage .experience-title #experience-title {
+    display: inline !important;
+    width: auto !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+  }
+
+  #viewer-stage .experience-title .experience-counter {
+    display: inline !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 9px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+}
+
+
+/* MOBILE TITLE LABEL: background follows the widest title text, not a tall panel. */
+@media screen and (max-width: 600px) {
+  #viewer-stage .experience-title {
+    position: absolute !important;
+    top: 10px !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: 50% !important;
+    inset-block: auto !important;
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: calc(100% - 24px) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 6px 10px !important;
+    margin: 0 !important;
+    display: inline-flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 7px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    background: rgba(0, 0, 0, .62) !important;
+    border: 1px solid rgba(255, 255, 255, .12) !important;
+    border-radius: 4px !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    font-size: 10px !important;
+    line-height: 1.15 !important;
+    letter-spacing: .05em !important;
+    white-space: nowrap !important;
+    transform: translateX(-50%) !important;
+  }
+
+  #viewer-stage .experience-title #experience-title {
+    display: inline-block !important;
+    flex: 0 1 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+  }
+
+  #viewer-stage .experience-title .experience-counter {
+    display: inline-block !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 9px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+}
