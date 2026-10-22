@@ -240,6 +240,12 @@ function setupViewer() {
     if (loading) loading.hidden = false;
     if (loadingLabel) loadingLabel.textContent = "Preparando la imagen…";
 
+    // Safety valve: never leave the full-screen loading veil covering the viewer.
+    const loadingFailsafe = window.setTimeout(function () {
+      if (loading) loading.hidden = true;
+      console.warn("[ViewmetricaMX] Se ocultó la capa de carga tras 12 s; revisa la conexión o la ruta de la imagen si no aparece.");
+    }, 12000);
+
     try {
       const texture = await loadTexture(index);
       if (currentExperience === index) {
@@ -248,7 +254,10 @@ function setupViewer() {
       }
     } catch (error) {
       if (loadingLabel) loadingLabel.textContent = "No se pudo cargar la imagen.";
+      // Keep the failed image from leaving a dark overlay over the rest of the experience.
+      if (loading) loading.hidden = true;
     } finally {
+      window.clearTimeout(loadingFailsafe);
       loadingExperience = false;
     }
   }
